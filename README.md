@@ -35,22 +35,21 @@ A secure and responsive web application for private online tutors to track stude
    ```
 
 2. **Environment Configuration:**
-   The `.env.local` file is already configured with:
+   Create a `.env.local` file with the following variables:
    ```env
-   DATABASE_URL=postgresql://postgres.bkwcrtmvjwgmnnqclrtz:pranto1998@aws-0-ap-south-1.pooler.supabase.com:5432/postgres?sslmode=require
+   DATABASE_URL=your_postgresql_database_url_here
    NEXTAUTH_URL=http://localhost:3000
-   NEXTAUTH_SECRET=your-secret-key-here-change-in-production
+   NEXTAUTH_SECRET=your-secure-secret-key-here
    APP_NAME=TutorTrack
    STUDENT_NAME=Your Student Name
+   NODE_TLS_REJECT_UNAUTHORIZED=0
    ```
 
 3. **Initialize the database and create a user:**
    ```bash
    npm run create-user
    ```
-   This creates a tutor account with:
-   - **Email:** tutor@tutortrack.com
-   - **Password:** tutor123
+   This will prompt you to create a tutor account with your preferred email and password.
 
 4. **Start the development server:**
    ```bash
@@ -58,7 +57,7 @@ A secure and responsive web application for private online tutors to track stude
    ```
 
 5. **Access the application:**
-   Open [http://localhost:3000](http://localhost:3000) and login with the credentials above.
+   Open [http://localhost:3000](http://localhost:3000) and login with the credentials you created.
 
 ## 📖 Usage Guide
 
@@ -170,6 +169,7 @@ Update `.env.local` for production:
 ```env
 NEXTAUTH_URL=https://your-domain.com
 NEXTAUTH_SECRET=your-super-secure-secret-key
+DATABASE_URL=your_production_database_url
 ```
 
 ### Deployment Platforms
@@ -250,6 +250,7 @@ if (presentCount >= 20) { // Changed from 16 to 20
    - Verify the DATABASE_URL in `.env.local`
    - Check internet connectivity
    - Ensure SSL is enabled
+   - Contact your database provider for connection issues
 
 2. **Authentication Issues**
    - Clear browser cookies and localStorage
