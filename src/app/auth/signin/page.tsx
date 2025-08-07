@@ -8,7 +8,7 @@ export default function SignIn() {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const [providers, setProviders] = useState<Record<string, any> | null>(null);
+  const [providers, setProviders] = useState<Record<string, { id: string; name: string }> | null>(null);
 
   useEffect(() => {
     const loadProviders = async () => {
@@ -115,7 +115,7 @@ export default function SignIn() {
 
           {/* OAuth Providers */}
           <div className="space-y-3">
-            {providers && Object.values(providers).map((provider: any) => {
+            {providers && Object.values(providers).map((provider: { id: string; name: string }) => {
               if (provider.id === 'credentials') return null;
               
               return (
