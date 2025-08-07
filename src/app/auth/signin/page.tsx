@@ -2,6 +2,7 @@
 
 import { signIn, getProviders } from 'next-auth/react';
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 
 export default function SignIn() {
   const [email, setEmail] = useState('');
@@ -46,8 +47,14 @@ export default function SignIn() {
         <div className="card">
           {/* Header */}
           <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-[#57564F] rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <span className="text-white font-bold text-xl">T</span>
+            <div className="w-20 h-20 relative mx-auto mb-4">
+              <Image
+                src="/logo.png"
+                alt="TutorTrack Logo"
+                fill
+                className="object-contain"
+                priority
+              />
             </div>
             <h2 className="text-2xl font-bold text-[#57564F]">TutorTrack</h2>
             <p className="text-[#7A7A73] mt-2">

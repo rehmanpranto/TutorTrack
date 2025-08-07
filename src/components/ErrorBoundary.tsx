@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 
 interface ErrorBoundaryState {
   hasError: boolean;
@@ -30,6 +31,14 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
       return (
         <div className="min-h-screen bg-[#F8F3CE] flex items-center justify-center p-4">
           <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-6 text-center">
+            <div className="w-16 h-16 relative mx-auto mb-4">
+              <Image
+                src="/logo.png"
+                alt="TutorTrack Logo"
+                fill
+                className="object-contain"
+              />
+            </div>
             <h2 className="text-2xl font-bold text-red-600 mb-4">Something went wrong</h2>
             <p className="text-gray-600 mb-4">
               An error occurred while loading the application.

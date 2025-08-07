@@ -1,5 +1,6 @@
 import React from 'react';
 import { signOut } from 'next-auth/react';
+import Image from 'next/image';
 
 interface HeaderProps {
   userName?: string;
@@ -12,8 +13,14 @@ export default function Header({ userName }: HeaderProps) {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-[#57564F] rounded-lg flex items-center justify-center">
-              <span className="text-white font-semibold text-sm">T</span>
+            <div className="w-10 h-10 relative">
+              <Image
+                src="/logo.png"
+                alt="TutorTrack Logo"
+                fill
+                className="object-contain"
+                priority
+              />
             </div>
             <h1 className="text-xl font-semibold text-[#57564F]">TutorTrack</h1>
           </div>

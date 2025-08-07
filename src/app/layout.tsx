@@ -6,6 +6,10 @@ import { ErrorBoundary } from "../components/ErrorBoundary";
 export const metadata: Metadata = {
   title: "TutorTrack - Tutoring Attendance Tracker",
   description: "Track tutoring attendance and manage session topics with monthly reports",
+  icons: {
+    icon: '/logo.png',
+    apple: '/logo.png',
+  },
 };
 
 export default function RootLayout({

@@ -6,6 +6,7 @@ import Header from '../components/Header';
 import Calendar from '../components/Calendar';
 import AttendanceForm from '../components/AttendanceForm';
 import ReportGenerator from '../components/ReportGenerator';
+import Loading from '../components/Loading';
 import { AttendanceRecord } from '../types';
 import { formatDate } from '../lib/utils';
 
@@ -167,44 +168,7 @@ export default function Dashboard() {
 
   // Show application loading while fetching data
   if (session && isLoading) {
-    return (
-      <div className="min-h-screen bg-[#DDDAD0]">
-        <Header userName={session.user?.name || 'User'} />
-        <main className="container mx-auto px-6 py-8">
-          <div className="max-w-6xl mx-auto">
-            <div className="mb-8">
-              <div className="animate-pulse">
-                <div className="h-8 bg-white rounded w-1/4 mb-2"></div>
-                <div className="h-4 bg-white rounded w-1/2"></div>
-              </div>
-            </div>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              <div className="lg:col-span-2">
-                <div className="card">
-                  <div className="animate-pulse space-y-4">
-                    <div className="h-6 bg-gray-200 rounded w-1/3"></div>
-                    <div className="grid grid-cols-7 gap-1">
-                      {Array.from({ length: 35 }).map((_, i) => (
-                        <div key={i} className="h-12 bg-gray-200 rounded"></div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="space-y-6">
-                <div className="card">
-                  <div className="animate-pulse space-y-4">
-                    <div className="h-6 bg-gray-200 rounded w-1/2"></div>
-                    <div className="h-10 bg-gray-200 rounded"></div>
-                    <div className="h-10 bg-gray-200 rounded"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </main>
-      </div>
-    );
+    return <Loading />;
   }
 
   // Show sign in page if not authenticated
