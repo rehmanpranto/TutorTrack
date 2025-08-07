@@ -3,6 +3,8 @@ export interface AttendanceRecord {
   attendance_date: string;
   status: 'Present' | 'Absent';
   topic?: string;
+  start_time?: string;
+  end_time?: string;
 }
 
 export interface Student {

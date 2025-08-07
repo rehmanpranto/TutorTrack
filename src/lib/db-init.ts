@@ -28,6 +28,8 @@ export async function initializeDatabase() {
         attendance_date DATE NOT NULL,
         status VARCHAR(10) CHECK (status IN ('Present', 'Absent')),
         topic VARCHAR(255),
+        start_time TIME,
+        end_time TIME,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
         UNIQUE (student_id, attendance_date)
@@ -43,11 +45,22 @@ export async function initializeDatabase() {
         attendance_date,
         status,
         topic,
+        start_time,
+        end_time,
         EXTRACT(MONTH FROM attendance_date) AS month,
         EXTRACT(YEAR FROM attendance_date) AS year,
         created_at
       FROM attendance
     `);
+
+    // Add time columns if they don't exist (migration)
+    try {
+      await client.query(`ALTER TABLE attendance ADD COLUMN IF NOT EXISTS start_time TIME`);
+      await client.query(`ALTER TABLE attendance ADD COLUMN IF NOT EXISTS end_time TIME`);
+    } catch (error) {
+      // Columns might already exist, ignore error
+      console.log('Time columns may already exist:', error);
+    }
 
     // Create users table for authentication
     await client.query(`

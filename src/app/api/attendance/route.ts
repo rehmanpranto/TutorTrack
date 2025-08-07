@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
 
     try {
       let query = `
-        SELECT id, attendance_date::text as attendance_date, status, topic 
+        SELECT id, attendance_date::text as attendance_date, status, topic, start_time, end_time 
         FROM attendance 
         WHERE student_id = $1
       `;
@@ -36,10 +36,36 @@ export async function GET(request: NextRequest) {
 
       const result = await client.query(query, params);
       
-      // Add cache headers for better performance
-      const response = NextResponse.json(result.rows);
-      response.headers.set('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300');
-      return response;
+      // Calculate present count for the current month (always use current month if no month/year specified)
+      let presentCount = 0;
+      if (month && year) {
+        // If month/year filters are applied, count present records in the filtered results
+        presentCount = result.rows.filter(row => row.status === 'Present').length;
+      } else {
+        // If no filters, get present count for current month
+        const currentDate = new Date();
+        const currentMonth = currentDate.getMonth() + 1;
+        const currentYear = currentDate.getFullYear();
+        
+        const presentCountResult = await client.query(
+          `SELECT COUNT(*) as count FROM attendance 
+           WHERE student_id = $1 AND status = 'Present' 
+           AND EXTRACT(MONTH FROM attendance_date) = $2 
+           AND EXTRACT(YEAR FROM attendance_date) = $3`,
+          [studentId, currentMonth, currentYear]
+        );
+        presentCount = parseInt(presentCountResult.rows[0].count);
+      }
+      
+      // Return structured response
+      const responseData = {
+        records: result.rows,
+        presentCount: presentCount,
+        totalRecords: result.rows.length
+      };
+      
+      // Return structured response
+      return NextResponse.json(responseData);
     } finally {
       client.release();
     }
@@ -57,7 +83,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { date, status, topic } = await request.json();
+    const { date, status, topic, startTime, endTime } = await request.json();
     const studentId = await getStudentId();
     
     // Check if this month already has 16 present entries
@@ -90,12 +116,12 @@ export async function POST(request: NextRequest) {
     const client = await pool.connect();
     try {
       const result = await client.query(
-        `INSERT INTO attendance (student_id, attendance_date, status, topic) 
-         VALUES ($1, $2, $3, $4) 
+        `INSERT INTO attendance (student_id, attendance_date, status, topic, start_time, end_time) 
+         VALUES ($1, $2, $3, $4, $5, $6) 
          ON CONFLICT (student_id, attendance_date) 
-         DO UPDATE SET status = $3, topic = $4
+         DO UPDATE SET status = $3, topic = $4, start_time = $5, end_time = $6
          RETURNING *`,
-        [studentId, date, status, topic]
+        [studentId, date, status, topic, startTime || null, endTime || null]
       );
 
       return NextResponse.json(result.rows[0]);

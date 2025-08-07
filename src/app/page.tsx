@@ -14,15 +14,19 @@ export default function Dashboard() {
   const [selectedDate, setSelectedDate] = useState('');
   const [attendanceData, setAttendanceData] = useState<AttendanceRecord[]>([]);
   const [presentCount, setPresentCount] = useState(0);
-  const [currentMonth, setCurrentMonth] = useState({ month: 8, year: 2025 }); // Default to current actual date
+  const [currentMonth, setCurrentMonth] = useState({ month: 8, year: 2025 }); // Fixed default to avoid hydration issues
   const [isLoading, setIsLoading] = useState(true);
   const [isInitialized, setIsInitialized] = useState(false);
 
   // Set initial values after component mounts to avoid hydration mismatch
   useEffect(() => {
     if (!isInitialized) {
-      setSelectedDate(formatDate(new Date()));
-      setCurrentMonth(getCurrentMonth());
+      const today = new Date();
+      setSelectedDate(formatDate(today));
+      setCurrentMonth({
+        month: today.getMonth() + 1,
+        year: today.getFullYear()
+      });
       setIsInitialized(true);
     }
   }, [isInitialized]);
@@ -60,8 +64,18 @@ export default function Dashboard() {
       
       if (attendanceResponse.ok) {
         const data = await attendanceResponse.json();
-        setAttendanceData(data.records || []);
-        setPresentCount(data.presentCount || 0);
+        console.log('Attendance data received:', data);
+        
+        // Handle both old and new API response formats
+        if (data.records) {
+          setAttendanceData(data.records);
+          setPresentCount(data.presentCount || 0);
+        } else {
+          // Fallback for direct array response
+          setAttendanceData(data);
+          const presentDays = data.filter((record: any) => record.status === 'Present').length;
+          setPresentCount(presentDays);
+        }
       }
     } catch (error) {
       console.error('Failed to load attendance data:', error);
@@ -72,33 +86,44 @@ export default function Dashboard() {
     setSelectedDate(date);
   };
 
-  const handleAttendanceSubmit = async (attendanceData: { status: string; topic: string }) => {
+  const handleAttendanceSubmit = async (attendanceData: { status: string; topic: string; startTime?: string; endTime?: string }) => {
     try {
+      console.log('Submitting attendance:', { date: selectedDate, status: attendanceData.status, topic: attendanceData.topic, startTime: attendanceData.startTime, endTime: attendanceData.endTime });
+      
       const response = await fetch('/api/attendance', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           date: selectedDate,
           status: attendanceData.status,
-          topic: attendanceData.topic
+          topic: attendanceData.topic,
+          startTime: attendanceData.startTime,
+          endTime: attendanceData.endTime
         })
       });
 
       if (response.ok) {
+        console.log('Attendance submitted successfully');
         await loadAttendanceData(); // Reload data after successful submission
       } else {
-        console.error('Failed to submit attendance');
+        const errorText = await response.text();
+        console.error('Failed to submit attendance:', response.status, errorText);
+        alert(`Failed to submit attendance: ${errorText}`);
       }
     } catch (error) {
       console.error('Error submitting attendance:', error);
+      alert(`Error submitting attendance: ${error}`);
     }
   };
 
   const handleGenerateReport = async (format: 'pdf' | 'excel') => {
     try {
-      const response = await fetch(`/api/reports?month=${currentMonth.month}&year=${currentMonth.year}&format=${format}`);
+      console.log('Generating report:', { month: currentMonth.month, year: currentMonth.year, format });
+      
+      const response = await fetch(`/api/report?month=${currentMonth.month}&year=${currentMonth.year}&format=${format}`);
       
       if (response.ok) {
+        console.log('Report generated successfully');
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -108,9 +133,14 @@ export default function Dashboard() {
         a.click();
         document.body.removeChild(a);
         window.URL.revokeObjectURL(url);
+      } else {
+        const errorText = await response.text();
+        console.error('Failed to generate report:', response.status, errorText);
+        alert(`Failed to generate report: ${errorText}`);
       }
     } catch (error) {
       console.error('Error generating report:', error);
+      alert(`Error generating report: ${error}`);
     }
   };
 
@@ -220,6 +250,43 @@ export default function Dashboard() {
             </p>
           </div>
 
+          {/* Monthly Summary */}
+          <div className="mb-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="card">
+              <div className="flex items-center space-x-3">
+                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                  <span className="text-green-600 text-xl">📅</span>
+                </div>
+                <div>
+                  <p className="text-sm text-[#7A7A73]">Present Days</p>
+                  <p className="text-2xl font-bold text-[#57564F]">{presentCount}</p>
+                </div>
+              </div>
+            </div>
+            <div className="card">
+              <div className="flex items-center space-x-3">
+                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <span className="text-blue-600 text-xl">🎯</span>
+                </div>
+                <div>
+                  <p className="text-sm text-[#7A7A73]">Monthly Limit</p>
+                  <p className="text-2xl font-bold text-[#57564F]">16</p>
+                </div>
+              </div>
+            </div>
+            <div className="card">
+              <div className="flex items-center space-x-3">
+                <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                  <span className="text-purple-600 text-xl">📊</span>
+                </div>
+                <div>
+                  <p className="text-sm text-[#7A7A73]">Remaining</p>
+                  <p className="text-2xl font-bold text-[#57564F]">{Math.max(0, 16 - presentCount)}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* Main Content Grid */}
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
             {/* Calendar Section */}
@@ -238,10 +305,10 @@ export default function Dashboard() {
                     </button>
                     <div className="bg-white border border-gray-200 px-4 py-2 rounded-lg">
                       <h4 className="text-sm font-medium text-[#57564F]">
-                        {new Date(currentMonth.year, currentMonth.month - 1).toLocaleDateString('en-US', {
+                        {isInitialized ? new Date(currentMonth.year, currentMonth.month - 1).toLocaleDateString('en-US', {
                           month: 'long',
                           year: 'numeric'
-                        })}
+                        }) : `${currentMonth.year}-${currentMonth.month.toString().padStart(2, '0')}`}
                       </h4>
                     </div>
                     <button
@@ -277,7 +344,9 @@ export default function Dashboard() {
                   canMarkPresent={canMarkPresent}
                   initialData={selectedDateAttendance ? {
                     status: selectedDateAttendance.status,
-                    topic: selectedDateAttendance.topic || ''
+                    topic: selectedDateAttendance.topic || '',
+                    startTime: selectedDateAttendance.start_time || '',
+                    endTime: selectedDateAttendance.end_time || ''
                   } : undefined}
                 />
               </div>
@@ -308,6 +377,7 @@ export default function Dashboard() {
                     <tr className="border-b border-gray-200">
                       <th className="text-left py-3 px-4 font-medium text-[#57564F]">Date</th>
                       <th className="text-left py-3 px-4 font-medium text-[#57564F]">Status</th>
+                      <th className="text-left py-3 px-4 font-medium text-[#57564F]">Time</th>
                       <th className="text-left py-3 px-4 font-medium text-[#57564F]">Topic</th>
                     </tr>
                   </thead>
@@ -315,7 +385,7 @@ export default function Dashboard() {
                     {attendanceData.slice(0, 10).map((record, index) => (
                       <tr key={`attendance-${record.id}-${index}`} className="hover:bg-gray-50 border-b border-gray-100">
                         <td className="py-3 px-4 text-[#57564F]">
-                          {new Date(record.attendance_date).toLocaleDateString()}
+                          {isInitialized ? new Date(record.attendance_date).toLocaleDateString() : record.attendance_date}
                         </td>
                         <td className="py-3 px-4">
                           <span className={`badge ${
@@ -325,6 +395,13 @@ export default function Dashboard() {
                           }`}>
                             {record.status}
                           </span>
+                        </td>
+                        <td className="py-3 px-4 text-[#57564F]">
+                          {record.start_time && record.end_time 
+                            ? `${record.start_time} - ${record.end_time}`
+                            : record.start_time || record.end_time || (
+                              <span className="text-[#7A7A73] italic">Not recorded</span>
+                            )}
                         </td>
                         <td className="py-3 px-4 text-[#57564F]">
                           {record.topic || <span className="text-[#7A7A73] italic">No topic recorded</span>}

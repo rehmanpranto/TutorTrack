@@ -75,24 +75,36 @@ export default function Calendar({ month, year, attendanceData, onDateClick }: C
           const attendance = attendanceMap[day];
           const isToday = isCurrentMonth && currentDay !== null && day === currentDay;
           
-          let bgColor = 'bg-white hover:bg-gray-50';
+          let bgColor = 'bg-white hover:bg-gray-50 border border-gray-200';
+          let textStyle = 'text-[#57564F]';
+          
           if (attendance) {
-            bgColor = attendance.status === 'Present' 
-              ? 'bg-green-100 hover:bg-green-200' 
-              : 'bg-red-100 hover:bg-red-200';
+            // Make recorded dates look "pressed/selected"
+            if (attendance.status === 'Present') {
+              bgColor = 'bg-green-200 hover:bg-green-300 border-2 border-green-400 shadow-inner';
+              textStyle = 'text-green-800 font-semibold';
+            } else {
+              bgColor = 'bg-red-200 hover:bg-red-300 border-2 border-red-400 shadow-inner';
+              textStyle = 'text-red-800 font-semibold';
+            }
           }
           
           if (isToday) {
-            bgColor += ' ring-2 ring-[#57564F]';
+            bgColor += ' ring-2 ring-[#57564F] ring-offset-1';
           }
 
           return (
             <button
               key={`day-${day}`}
               onClick={() => handleDateClick(day)}
-              className={`calendar-day h-12 flex items-center justify-center text-sm font-medium text-[#57564F] transition-colors cursor-pointer ${bgColor}`}
+              className={`calendar-day h-12 flex items-center justify-center text-sm font-medium transition-all duration-200 cursor-pointer transform relative ${attendance ? 'scale-95' : 'hover:scale-105'} ${bgColor}`}
             >
-              <span className={isToday ? 'font-bold' : ''}>{day}</span>
+              <span className={`${textStyle} ${isToday ? 'font-bold' : ''}`}>
+                {day}
+              </span>
+              {attendance && (
+                <div className="absolute top-1 right-1 w-2 h-2 rounded-full bg-current opacity-60"></div>
+              )}
             </button>
           );
         })}
@@ -101,15 +113,19 @@ export default function Calendar({ month, year, attendanceData, onDateClick }: C
       {/* Legend */}
       <div className="flex items-center justify-center space-x-6 text-xs">
         <div className="flex items-center space-x-2">
-          <div className="w-3 h-3 bg-green-100 rounded border"></div>
+          <div className="w-4 h-4 bg-green-200 border-2 border-green-400 rounded shadow-inner flex items-center justify-center">
+            <div className="w-1 h-1 bg-green-800 rounded-full"></div>
+          </div>
           <span className="text-[#7A7A73]">Present</span>
         </div>
         <div className="flex items-center space-x-2">
-          <div className="w-3 h-3 bg-red-100 rounded border"></div>
+          <div className="w-4 h-4 bg-red-200 border-2 border-red-400 rounded shadow-inner flex items-center justify-center">
+            <div className="w-1 h-1 bg-red-800 rounded-full"></div>
+          </div>
           <span className="text-[#7A7A73]">Absent</span>
         </div>
         <div className="flex items-center space-x-2">
-          <div className="w-3 h-3 bg-white rounded border-2 border-[#57564F]"></div>
+          <div className="w-4 h-4 bg-white rounded border-2 border-[#57564F] ring-1 ring-[#57564F] ring-offset-1"></div>
           <span className="text-[#7A7A73]">Today</span>
         </div>
       </div>
