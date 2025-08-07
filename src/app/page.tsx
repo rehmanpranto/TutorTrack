@@ -1,13 +1,13 @@
 'use client';
 
 import { useSession, signIn } from 'next-auth/react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Header from '../components/Header';
 import Calendar from '../components/Calendar';
 import AttendanceForm from '../components/AttendanceForm';
 import ReportGenerator from '../components/ReportGenerator';
-import { AttendanceRecord, MonthlyReport } from '../types';
-import { formatDate, getCurrentMonth } from '../lib/utils';
+import { AttendanceRecord } from '../types';
+import { formatDate } from '../lib/utils';
 
 export default function Dashboard() {
   const { data: session, status } = useSession();
@@ -31,31 +31,7 @@ export default function Dashboard() {
     }
   }, [isInitialized]);
 
-  // Initialize database and load data on mount
-  useEffect(() => {
-    if (session) {
-      initializeAndLoadData();
-    }
-  }, [session, currentMonth]);
-
-  const initializeAndLoadData = async () => {
-    try {
-      // Skip database initialization in development after first run
-      if (process.env.NODE_ENV === 'development') {
-        await loadAttendanceData();
-      } else {
-        // Initialize database only in production or first run
-        await fetch('/api/init-db');
-        await loadAttendanceData();
-      }
-    } catch (error) {
-      console.error('Failed to initialize:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const loadAttendanceData = async () => {
+  const loadAttendanceData = useCallback(async () => {
     try {
       // Use Promise.all to make parallel requests if needed
       const [attendanceResponse] = await Promise.all([
@@ -73,14 +49,38 @@ export default function Dashboard() {
         } else {
           // Fallback for direct array response
           setAttendanceData(data);
-          const presentDays = data.filter((record: any) => record.status === 'Present').length;
+          const presentDays = data.filter((record: AttendanceRecord) => record.status === 'Present').length;
           setPresentCount(presentDays);
         }
       }
     } catch (error) {
       console.error('Failed to load attendance data:', error);
     }
-  };
+  }, [currentMonth.month, currentMonth.year]);
+
+  // Initialize database and load data on mount
+  const initializeAndLoadData = useCallback(async () => {
+    try {
+      // Skip database initialization in development after first run
+      if (process.env.NODE_ENV === 'development') {
+        await loadAttendanceData();
+      } else {
+        // Initialize database only in production or first run
+        await fetch('/api/init-db');
+        await loadAttendanceData();
+      }
+    } catch (error) {
+      console.error('Failed to initialize:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [loadAttendanceData]);
+
+  useEffect(() => {
+    if (session) {
+      initializeAndLoadData();
+    }
+  }, [session, currentMonth, initializeAndLoadData]);
 
   const handleDateClick = (date: string) => {
     setSelectedDate(date);

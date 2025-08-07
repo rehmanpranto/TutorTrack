@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { formatDate, formatDisplayDate } from '../lib/utils';
+import { formatDisplayDate } from '../lib/utils';
 
 interface AttendanceFormProps {
   selectedDate: string;
@@ -62,7 +62,7 @@ export default function AttendanceForm({
       }
       const date = new Date(year, month - 1, day);
       return formatDisplayDate(date);
-    } catch (error) {
+    } catch {
       return selectedDate; // Fallback to raw date string on error
     }
   })();

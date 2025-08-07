@@ -74,7 +74,25 @@ export async function GET(request: NextRequest) {
   }
 }
 
-function generatePDFReport(data: any) {
+interface AttendanceSession {
+  attendance_date: string;
+  status: string;
+  start_time?: string;
+  end_time?: string;
+  topic?: string;
+}
+
+interface ReportData {
+  studentName: string;
+  month: number;
+  year: number;
+  sessions: AttendanceSession[];
+  totalSessions: number;
+  totalPresent: number;
+  totalAbsent: number;
+}
+
+function generatePDFReport(data: ReportData) {
   const doc = new jsPDF();
   
   // Title
@@ -110,7 +128,7 @@ function generatePDFReport(data: any) {
   doc.line(20, yPosition - 5, 190, yPosition - 5);
   
   // Data rows
-  data.sessions.forEach((session: any, index: number) => {
+  data.sessions.forEach((session: AttendanceSession) => {
     if (yPosition > 270) { // New page if needed
       doc.addPage();
       yPosition = 30;
@@ -139,7 +157,7 @@ function generatePDFReport(data: any) {
   });
 }
 
-function generateExcelReport(data: any) {
+function generateExcelReport(data: ReportData) {
   // Create workbook and worksheet
   const wb = XLSX.utils.book_new();
   
@@ -160,7 +178,7 @@ function generateExcelReport(data: any) {
   ];
   
   // Add attendance data
-  data.sessions.forEach((session: any) => {
+  data.sessions.forEach((session: AttendanceSession) => {
     const date = new Date(session.attendance_date).toLocaleDateString();
     const timeRange = session.start_time && session.end_time 
       ? `${session.start_time} - ${session.end_time}`

@@ -33,7 +33,7 @@ export default function SignIn() {
       if (result?.error) {
         setError('Invalid credentials. Please try again.');
       }
-    } catch (error) {
+    } catch {
       setError('An error occurred. Please try again.');
     } finally {
       setIsLoading(false);

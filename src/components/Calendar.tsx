@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { AttendanceRecord } from '../types';
-import { formatDisplayDate, getMonthName, getDaysInMonth, getFirstDayOfMonth, formatDateFromYMD } from '../lib/utils';
+import { getDaysInMonth, getFirstDayOfMonth, formatDateFromYMD } from '../lib/utils';
 
 interface CalendarProps {
   month: number;
