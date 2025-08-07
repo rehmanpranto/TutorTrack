@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Providers from "../components/Providers";
+import { ErrorBoundary } from "../components/ErrorBoundary";
 
 export const metadata: Metadata = {
   title: "TutorTrack - Tutoring Attendance Tracker",
@@ -17,9 +18,11 @@ export default function RootLayout({
       <body
         className="antialiased bg-[#F8F3CE] text-[#57564F] font-mono min-h-screen"
       >
-        <Providers>
-          {children}
-        </Providers>
+        <ErrorBoundary>
+          <Providers>
+            {children}
+          </Providers>
+        </ErrorBoundary>
       </body>
     </html>
   );
