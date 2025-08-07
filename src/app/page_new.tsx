@@ -11,21 +11,11 @@ import { formatDate, getCurrentMonth } from '../lib/utils';
 
 export default function Dashboard() {
   const { data: session, status } = useSession();
-  const [selectedDate, setSelectedDate] = useState('');
+  const [selectedDate, setSelectedDate] = useState(formatDate(new Date()));
   const [attendanceData, setAttendanceData] = useState<AttendanceRecord[]>([]);
   const [presentCount, setPresentCount] = useState(0);
-  const [currentMonth, setCurrentMonth] = useState({ month: 8, year: 2025 }); // Default to current actual date
+  const [currentMonth, setCurrentMonth] = useState(getCurrentMonth());
   const [isLoading, setIsLoading] = useState(true);
-  const [isInitialized, setIsInitialized] = useState(false);
-
-  // Set initial values after component mounts to avoid hydration mismatch
-  useEffect(() => {
-    if (!isInitialized) {
-      setSelectedDate(formatDate(new Date()));
-      setCurrentMonth(getCurrentMonth());
-      setIsInitialized(true);
-    }
-  }, [isInitialized]);
 
   // Initialize database and load data on mount
   useEffect(() => {
