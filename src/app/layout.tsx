@@ -25,10 +25,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${openSans.variable} antialiased bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-slate-800 text-gray-900 dark:text-gray-100 font-sans min-h-screen transition-colors duration-300`}
-      >
+    <html lang="en" suppressHydrationWarning>
+      <body className={openSans.className} suppressHydrationWarning>
         <ErrorBoundary>
           <Providers>
             {children}

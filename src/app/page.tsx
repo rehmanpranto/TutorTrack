@@ -8,8 +8,10 @@ import AttendanceForm from '../components/AttendanceForm';
 import ReportGenerator from '../components/ReportGenerator';
 import Loading from '../components/Loading';
 import ClientOnly from '../components/ClientOnly';
+import HydrationSafe from '../components/HydrationSafe';
+import NoSSR from '../components/NoSSR';
 import { AttendanceRecord } from '../types';
-import { formatDate } from '../lib/utils';
+import { formatDate, formatDateSafe, formatMonthYearSafe } from '../lib/utils';
 
 export default function Dashboard() {
   const { data: session, status } = useSession();
@@ -173,7 +175,7 @@ export default function Dashboard() {
   }
 
   // Show application loading while fetching data
-  if (session && isLoading) {
+  if (session && (isLoading || !isInitialized)) {
     return <Loading />;
   }
 
@@ -223,7 +225,7 @@ export default function Dashboard() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-slate-800 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-slate-800 relative overflow-hidden" suppressHydrationWarning>
       {/* Modern geometric background pattern */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-20 left-10 w-32 h-32 border border-blue-200/30 dark:border-blue-600/20 rounded-full"></div>
@@ -252,14 +254,17 @@ export default function Dashboard() {
                   ←
                 </button>
                 <div className="px-4 py-2 bg-blue-50 dark:bg-blue-900/50 rounded-lg">
-                  <span className="text-sm font-medium text-blue-900 dark:text-blue-100">
-                    <ClientOnly fallback={`${currentMonth.year}-${currentMonth.month.toString().padStart(2, '0')}`}>
-                      {new Date(currentMonth.year, currentMonth.month - 1).toLocaleDateString('en-US', {
-                        month: 'long',
-                        year: 'numeric'
-                      })}
-                    </ClientOnly>
-                  </span>
+                  <NoSSR
+                    fallback={
+                      <span className="text-sm font-medium text-blue-900 dark:text-blue-100">
+                        {`${currentMonth.year}-${currentMonth.month.toString().padStart(2, '0')}`}
+                      </span>
+                    }
+                  >
+                    <span className="text-sm font-medium text-blue-900 dark:text-blue-100">
+                      {formatMonthYearSafe(currentMonth.year, currentMonth.month)}
+                    </span>
+                  </NoSSR>
                 </div>
                 <button
                   onClick={() => handleMonthChange('next')}
@@ -362,11 +367,17 @@ export default function Dashboard() {
                     {attendanceData.slice(0, 4).map((record, index) => (
                       <div key={`attendance-${record.id}-${index}`} className="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                         <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                            <ClientOnly fallback={record.attendance_date.split('-').slice(1).join('/')}>
-                              {new Date(record.attendance_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                            </ClientOnly>
-                          </span>
+                          <NoSSR
+                            fallback={
+                              <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                                {formatDateSafe(record.attendance_date, 'short')}
+                              </span>
+                            }
+                          >
+                            <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                              {formatDateSafe(record.attendance_date, 'short')}
+                            </span>
+                          </NoSSR>
                           <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                             record.status === 'Present' 
                               ? 'bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300' 

@@ -10,8 +10,7 @@ const nextConfig = {
   
   // Experimental features
   experimental: {
-    // Disable app directory for now to use pages directory
-    appDir: true,
+    // No experimental features needed for Next.js 15
   },
   
   // Disable X-Powered-By header for security

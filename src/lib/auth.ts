@@ -49,7 +49,7 @@ export const authOptions: NextAuthOptions = {
           }
         } catch (error) {
           console.error('Database error during authentication:', error);
-          return null;
+          throw new Error('Authentication failed due to database error');
         }
       }
     }),
@@ -84,5 +84,18 @@ export const authOptions: NextAuthOptions = {
     },
   },
   secret: process.env.NEXTAUTH_SECRET,
-  debug: process.env.NODE_ENV === 'development',
+  debug: false, // Disable debug mode to reduce console noise
+  logger: {
+    error: (code, metadata) => {
+      // Only log actual errors, not auth flow warnings
+      if (metadata && typeof metadata === 'object' && 'error' in metadata) {
+        const error = metadata.error as Error;
+        if (error?.message && !error.message.includes('SessionToken')) {
+          console.error('NextAuth error:', code, error.message);
+        }
+      }
+    },
+    warn: () => {}, // Suppress warnings
+    debug: () => {}, // Suppress debug messages
+  },
 };

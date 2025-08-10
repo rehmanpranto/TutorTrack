@@ -18,8 +18,10 @@ function createPool() {
       idleTimeoutMillis: 30000,
       connectionTimeoutMillis: 10000, // Increased timeout
       keepAlive: true,
-      // Add SSL configuration for production databases
-      ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+      // Add SSL configuration - always use SSL for Supabase
+      ssl: {
+        rejectUnauthorized: false, // Required for Supabase connections
+      },
     });
 
     // Add error handling

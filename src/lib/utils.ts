@@ -20,6 +20,53 @@ export function formatDisplayDate(date: Date): string {
   });
 }
 
+// Safe client-side date formatting to prevent hydration mismatches
+export function formatDateSafe(dateStr: string, format: 'short' | 'long' = 'short'): string {
+  // Check if we're on the client side
+  if (typeof window === 'undefined') {
+    // Server-side fallback
+    const parts = dateStr.split('-');
+    if (parts.length === 3) {
+      const month = parseInt(parts[1]);
+      const day = parseInt(parts[2]);
+      return format === 'short' ? `${month}/${day}` : `${month}-${day}`;
+    }
+    return dateStr;
+  }
+  
+  // Client-side formatting
+  try {
+    const date = new Date(dateStr);
+    if (format === 'short') {
+      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    } else {
+      return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+    }
+  } catch {
+    return dateStr;
+  }
+}
+
+// Safe month/year formatting to prevent hydration mismatches
+export function formatMonthYearSafe(year: number, month: number): string {
+  // Check if we're on the client side
+  if (typeof window === 'undefined') {
+    // Server-side fallback
+    return `${year}-${month.toString().padStart(2, '0')}`;
+  }
+  
+  // Client-side formatting
+  try {
+    const date = new Date(year, month - 1);
+    return date.toLocaleDateString('en-US', {
+      month: 'long',
+      year: 'numeric'
+    });
+  } catch {
+    return `${year}-${month.toString().padStart(2, '0')}`;
+  }
+}
+
 export function getMonthName(month: number): string {
   const months = [
     'January', 'February', 'March', 'April', 'May', 'June',
