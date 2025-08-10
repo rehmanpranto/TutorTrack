@@ -42,22 +42,27 @@ export default function SignIn() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#DDDAD0]">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50">
       <div className="max-w-md w-full mx-4">
-        <div className="card">
+        <div className="bg-white rounded-3xl p-8 shadow-lg border border-gray-100">
           {/* Header */}
           <div className="text-center mb-8">
-            <div className="w-20 h-20 relative mx-auto mb-4">
-              <Image
-                src="/logo.png"
-                alt="TutorTrack Logo"
-                fill
-                className="object-contain"
-                priority
-              />
+            <div className="w-20 h-20 mx-auto mb-4">
+              {/* Elegant login logo with layered design */}
+              <div className="w-full h-full relative flex items-center justify-center">
+                <div className="w-16 h-16 bg-gradient-to-tr from-blue-500 via-purple-500 to-blue-600 rounded-full shadow-xl"></div>
+                <div className="absolute w-10 h-10 bg-white/90 dark:bg-gray-800/90 rounded-full shadow-lg border-2 border-white/50"></div>
+                <div className="absolute">
+                  <svg className="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
+                </div>
+              </div>
             </div>
-            <h2 className="text-2xl font-bold text-[#57564F]">TutorTrack</h2>
-            <p className="text-[#7A7A73] mt-2">
+            <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              TutorTrack
+            </h2>
+            <p className="text-gray-600 mt-2">
               Sign in to access your attendance tracker
             </p>
           </div>
@@ -72,7 +77,7 @@ export default function SignIn() {
           {/* Sign In Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-[#57564F] mb-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                 Email
               </label>
               <input
@@ -86,7 +91,7 @@ export default function SignIn() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-[#57564F] mb-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                 Password
               </label>
               <input

@@ -34,20 +34,20 @@ export default function ReportGenerator({ month, year, onGenerate }: ReportGener
   return (
     <div className="space-y-4">
       {/* Month/Year Selection */}
-      <div className="bg-gray-50 rounded-lg p-4 space-y-3">
-        <h4 className="text-sm font-medium text-[#57564F]">
+      <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 space-y-3">
+        <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">
           Select Report Period
         </h4>
         
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-xs font-medium text-[#7A7A73] mb-1">
+            <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
               Month
             </label>
             <select
               value={selectedMonth}
               onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
-              className="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white text-[#57564F] focus:ring-2 focus:ring-[#57564F] focus:border-transparent"
+              className="w-full text-sm border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 bg-white dark:bg-gray-700/50 text-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
             >
               {Array.from({ length: 12 }, (_, i) => i + 1).map(monthNum => (
                 <option key={monthNum} value={monthNum}>
@@ -58,13 +58,13 @@ export default function ReportGenerator({ month, year, onGenerate }: ReportGener
           </div>
           
           <div>
-            <label className="block text-xs font-medium text-[#7A7A73] mb-1">
+            <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
               Year
             </label>
             <select
               value={selectedYear}
               onChange={(e) => setSelectedYear(parseInt(e.target.value))}
-              className="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white text-[#57564F] focus:ring-2 focus:ring-[#57564F] focus:border-transparent"
+              className="w-full text-sm border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 bg-white dark:bg-gray-700/50 text-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
             >
               {availableYears.map(yearNum => (
                 <option key={yearNum} value={yearNum}>
@@ -75,7 +75,7 @@ export default function ReportGenerator({ month, year, onGenerate }: ReportGener
           </div>
         </div>
         
-        <p className="text-xs text-[#7A7A73]">
+        <p className="text-xs text-gray-600 dark:text-gray-400">
           Selected: {getMonthName(selectedMonth)} {selectedYear}
         </p>
       </div>
@@ -85,7 +85,7 @@ export default function ReportGenerator({ month, year, onGenerate }: ReportGener
         <button
           onClick={() => handleGenerateReport('pdf')}
           disabled={isGenerating}
-          className="btn w-full flex items-center justify-center space-x-2"
+          className="w-full inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium rounded-xl transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none space-x-2"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -96,7 +96,7 @@ export default function ReportGenerator({ month, year, onGenerate }: ReportGener
         <button
           onClick={() => handleGenerateReport('excel')}
           disabled={isGenerating}
-          className="btn w-full flex items-center justify-center space-x-2"
+          className="w-full inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium rounded-xl transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none space-x-2"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />

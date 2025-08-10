@@ -55,49 +55,48 @@ export default function Calendar({ month, year, attendanceData, onDateClick }: C
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {/* Weekday Headers */}
-      <div className="grid grid-cols-7 gap-2">
+      <div className="grid grid-cols-7 gap-1">
         {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, index) => (
-          <div key={`weekday-${index}-${day}`} className="calendar-day text-center py-2 text-sm font-medium text-[#57564F] bg-gray-100">
+          <div key={`weekday-${index}-${day}`} className="text-center py-3 text-sm font-semibold text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
             {day}
           </div>
         ))}
       </div>
 
       {/* Calendar Grid */}
-      <div className="grid grid-cols-7 gap-2">
+      <div className="grid grid-cols-7 gap-1">
         {calendarDays.map((day, index) => {
           if (day === null) {
-            return <div key={`empty-${index}`} className="calendar-day h-12"></div>;
+            return <div key={`empty-${index}`} className="h-14"></div>;
           }
 
           const attendance = attendanceMap[day];
           const isToday = isCurrentMonth && currentDay !== null && day === currentDay;
           
-          let bgColor = 'bg-white hover:bg-gray-50 border border-gray-200';
-          let textStyle = 'text-[#57564F]';
+          let bgColor = 'bg-white dark:bg-gray-700/50 hover:bg-blue-50 dark:hover:bg-blue-900/20 border border-gray-200 dark:border-gray-600';
+          let textStyle = 'text-gray-700 dark:text-gray-300';
           
           if (attendance) {
-            // Make recorded dates look "pressed/selected"
             if (attendance.status === 'Present') {
-              bgColor = 'bg-green-200 hover:bg-green-300 border-2 border-green-400 shadow-inner';
-              textStyle = 'text-green-800 font-semibold';
+              bgColor = 'bg-green-100 dark:bg-green-900/30 hover:bg-green-200 dark:hover:bg-green-800/30 border-2 border-green-300 dark:border-green-400/50';
+              textStyle = 'text-green-800 dark:text-green-300 font-semibold';
             } else {
-              bgColor = 'bg-red-200 hover:bg-red-300 border-2 border-red-400 shadow-inner';
-              textStyle = 'text-red-800 font-semibold';
+              bgColor = 'bg-red-100 dark:bg-red-900/30 hover:bg-red-200 dark:hover:bg-red-800/30 border-2 border-red-300 dark:border-red-400/50';
+              textStyle = 'text-red-800 dark:text-red-300 font-semibold';
             }
           }
           
           if (isToday) {
-            bgColor += ' ring-2 ring-[#57564F] ring-offset-1';
+            bgColor += ' ring-2 ring-blue-500 dark:ring-blue-400 ring-offset-1 dark:ring-offset-gray-800';
           }
 
           return (
             <button
               key={`day-${day}`}
               onClick={() => handleDateClick(day)}
-              className={`calendar-day h-12 flex items-center justify-center text-sm font-medium transition-all duration-200 cursor-pointer transform relative ${attendance ? 'scale-95' : 'hover:scale-105'} ${bgColor}`}
+              className={`h-14 flex items-center justify-center text-sm font-medium transition-all duration-200 cursor-pointer rounded-lg transform hover:scale-105 ${bgColor} relative`}
             >
               <span className={`${textStyle} ${isToday ? 'font-bold' : ''}`}>
                 {day}
@@ -111,22 +110,22 @@ export default function Calendar({ month, year, attendanceData, onDateClick }: C
       </div>
 
       {/* Legend */}
-      <div className="flex items-center justify-center space-x-6 text-xs">
+      <div className="flex items-center justify-center space-x-8 text-sm">
         <div className="flex items-center space-x-2">
-          <div className="w-4 h-4 bg-green-200 border-2 border-green-400 rounded shadow-inner flex items-center justify-center">
-            <div className="w-1 h-1 bg-green-800 rounded-full"></div>
+          <div className="w-4 h-4 bg-green-100 dark:bg-green-900/30 border-2 border-green-300 dark:border-green-400/50 rounded-lg flex items-center justify-center">
+            <div className="w-1.5 h-1.5 bg-green-800 dark:bg-green-300 rounded-full"></div>
           </div>
-          <span className="text-[#7A7A73]">Present</span>
+          <span className="text-gray-600 dark:text-gray-400 font-medium">Present</span>
         </div>
         <div className="flex items-center space-x-2">
-          <div className="w-4 h-4 bg-red-200 border-2 border-red-400 rounded shadow-inner flex items-center justify-center">
-            <div className="w-1 h-1 bg-red-800 rounded-full"></div>
+          <div className="w-4 h-4 bg-red-100 dark:bg-red-900/30 border-2 border-red-300 dark:border-red-400/50 rounded-lg flex items-center justify-center">
+            <div className="w-1.5 h-1.5 bg-red-800 dark:bg-red-300 rounded-full"></div>
           </div>
-          <span className="text-[#7A7A73]">Absent</span>
+          <span className="text-gray-600 dark:text-gray-400 font-medium">Absent</span>
         </div>
         <div className="flex items-center space-x-2">
-          <div className="w-4 h-4 bg-white rounded border-2 border-[#57564F] ring-1 ring-[#57564F] ring-offset-1"></div>
-          <span className="text-[#7A7A73]">Today</span>
+          <div className="w-4 h-4 bg-white dark:bg-gray-700/50 rounded-lg border-2 border-blue-500 dark:border-blue-400 ring-2 ring-blue-500 dark:ring-blue-400 ring-offset-1 dark:ring-offset-gray-800"></div>
+          <span className="text-gray-600 dark:text-gray-400 font-medium">Today</span>
         </div>
       </div>
     </div>

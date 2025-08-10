@@ -29,15 +29,17 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
   render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen bg-[#F8F3CE] flex items-center justify-center p-4">
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center p-4">
           <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-6 text-center">
-            <div className="w-16 h-16 relative mx-auto mb-4">
-              <Image
-                src="/logo.png"
-                alt="TutorTrack Logo"
-                fill
-                className="object-contain"
-              />
+            <div className="w-16 h-16 mx-auto mb-4">
+              {/* Modern error state logo */}
+              <div className="w-full h-full relative flex items-center justify-center">
+                <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-orange-500 rounded-full shadow-lg"></div>
+                <div className="absolute w-8 h-8 bg-white rounded-full flex items-center justify-center">
+                  <div className="w-1 h-4 bg-red-500 rounded-full"></div>
+                  <div className="w-1 h-1 bg-red-500 rounded-full ml-0.5 mt-1"></div>
+                </div>
+              </div>
             </div>
             <h2 className="text-2xl font-bold text-red-600 mb-4">Something went wrong</h2>
             <p className="text-gray-600 mb-4">
