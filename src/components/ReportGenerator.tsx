@@ -1,19 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { getMonthName } from '../lib/utils';
 
 interface ReportGeneratorProps {
   month: number;
   year: number;
-  onGenerate: (format: 'pdf' | 'excel') => Promise<void>;
+  onGenerate: (format: 'pdf' | 'excel', selectedMonth: number, selectedYear: number) => Promise<void>;
 }
 
 export default function ReportGenerator({ month, year, onGenerate }: ReportGeneratorProps) {
-  const [isGenerating, setIsGenerating] = React.useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [selectedMonth, setSelectedMonth] = useState(month);
+  const [selectedYear, setSelectedYear] = useState(year);
 
   const handleGenerateReport = async (format: 'pdf' | 'excel') => {
     setIsGenerating(true);
     try {
-      await onGenerate(format);
+      await onGenerate(format, selectedMonth, selectedYear);
     } catch (error) {
       console.error('Failed to generate report:', error);
       alert('Failed to generate report. Please try again.');
@@ -22,15 +24,59 @@ export default function ReportGenerator({ month, year, onGenerate }: ReportGener
     }
   };
 
+  // Generate years for dropdown (current year and 2 years back)
+  const currentYear = new Date().getFullYear();
+  const availableYears = [];
+  for (let i = 0; i <= 2; i++) {
+    availableYears.push(currentYear - i);
+  }
+
   return (
     <div className="space-y-4">
-      {/* Report Info */}
-      <div className="bg-gray-50 rounded-lg p-4">
-        <h4 className="text-sm font-medium text-[#57564F] mb-2">
-          Generate Report
+      {/* Month/Year Selection */}
+      <div className="bg-gray-50 rounded-lg p-4 space-y-3">
+        <h4 className="text-sm font-medium text-[#57564F]">
+          Select Report Period
         </h4>
-        <p className="text-sm text-[#7A7A73]">
-          {getMonthName(month)} {year}
+        
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="block text-xs font-medium text-[#7A7A73] mb-1">
+              Month
+            </label>
+            <select
+              value={selectedMonth}
+              onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
+              className="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white text-[#57564F] focus:ring-2 focus:ring-[#57564F] focus:border-transparent"
+            >
+              {Array.from({ length: 12 }, (_, i) => i + 1).map(monthNum => (
+                <option key={monthNum} value={monthNum}>
+                  {getMonthName(monthNum)}
+                </option>
+              ))}
+            </select>
+          </div>
+          
+          <div>
+            <label className="block text-xs font-medium text-[#7A7A73] mb-1">
+              Year
+            </label>
+            <select
+              value={selectedYear}
+              onChange={(e) => setSelectedYear(parseInt(e.target.value))}
+              className="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white text-[#57564F] focus:ring-2 focus:ring-[#57564F] focus:border-transparent"
+            >
+              {availableYears.map(yearNum => (
+                <option key={yearNum} value={yearNum}>
+                  {yearNum}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+        
+        <p className="text-xs text-[#7A7A73]">
+          Selected: {getMonthName(selectedMonth)} {selectedYear}
         </p>
       </div>
 

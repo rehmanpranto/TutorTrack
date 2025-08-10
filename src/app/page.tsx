@@ -117,11 +117,14 @@ export default function Dashboard() {
     }
   };
 
-  const handleGenerateReport = async (format: 'pdf' | 'excel') => {
+  const handleGenerateReport = async (format: 'pdf' | 'excel', selectedMonth?: number, selectedYear?: number) => {
     try {
-      console.log('Generating report:', { month: currentMonth.month, year: currentMonth.year, format });
+      const reportMonth = selectedMonth || currentMonth.month;
+      const reportYear = selectedYear || currentMonth.year;
       
-      const response = await fetch(`/api/report?month=${currentMonth.month}&year=${currentMonth.year}&format=${format}`);
+      console.log('Generating report:', { month: reportMonth, year: reportYear, format });
+      
+      const response = await fetch(`/api/report?month=${reportMonth}&year=${reportYear}&format=${format}`);
       
       if (response.ok) {
         console.log('Report generated successfully');
@@ -129,7 +132,7 @@ export default function Dashboard() {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `attendance-report-${currentMonth.year}-${currentMonth.month}.${format === 'pdf' ? 'pdf' : 'xlsx'}`;
+        a.download = `attendance-report-${reportYear}-${reportMonth}.${format === 'pdf' ? 'pdf' : 'xlsx'}`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -252,34 +255,34 @@ export default function Dashboard() {
           </div>
 
           {/* Main Content Grid */}
-          <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
-            {/* Calendar Section */}
-            <div className="xl:col-span-2">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Left Column - Calendar */}
+            <div>
               <div className="card">
                 <div className="flex items-center justify-between mb-6">
                   <h3 className="text-lg font-semibold text-[#57564F]">
                     Calendar
                   </h3>
-                  <div className="flex items-center space-x-4">
+                  <div className="flex items-center space-x-2">
                     <button
                       onClick={() => handleMonthChange('prev')}
-                      className="btn px-4 py-2 text-sm"
+                      className="btn px-3 py-1 text-xs"
                     >
-                      ← Previous
+                      ←
                     </button>
-                    <div className="bg-white border border-gray-200 px-4 py-2 rounded-lg">
-                      <h4 className="text-sm font-medium text-[#57564F]">
+                    <div className="bg-white border border-gray-200 px-3 py-1 rounded-lg">
+                      <h4 className="text-xs font-medium text-[#57564F]">
                         {isInitialized ? new Date(currentMonth.year, currentMonth.month - 1).toLocaleDateString('en-US', {
-                          month: 'long',
+                          month: 'short',
                           year: 'numeric'
                         }) : `${currentMonth.year}-${currentMonth.month.toString().padStart(2, '0')}`}
                       </h4>
                     </div>
                     <button
                       onClick={() => handleMonthChange('next')}
-                      className="btn px-4 py-2 text-sm"
+                      className="btn px-3 py-1 text-xs"
                     >
-                      Next →
+                      →
                     </button>
                   </div>
                 </div>
@@ -294,7 +297,7 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* Right Column - Forms */}
+            {/* Right Column - Forms and Info */}
             <div className="space-y-6">
               {/* Attendance Form */}
               <div className="card">
@@ -315,76 +318,65 @@ export default function Dashboard() {
                 />
               </div>
 
-              {/* Reports */}
-              <div className="card">
-                <h3 className="text-lg font-semibold text-[#57564F] mb-4">
-                  Reports
-                </h3>
-                <ReportGenerator
-                  month={currentMonth.month}
-                  year={currentMonth.year}
-                  onGenerate={handleGenerateReport}
-                />
+              {/* Bottom Row - Recent Sessions and Reports */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Recent Sessions */}
+                <div className="card">
+                  <h3 className="text-lg font-semibold text-[#57564F] mb-4">
+                    Recent Sessions
+                  </h3>
+                  {attendanceData.length > 0 ? (
+                    <div className="space-y-2">
+                      {attendanceData.slice(0, 4).map((record, index) => (
+                        <div key={`attendance-${record.id}-${index}`} className="border border-gray-200 rounded-lg p-2 hover:bg-gray-50">
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="text-xs font-medium text-[#57564F]">
+                              {isInitialized ? new Date(record.attendance_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : record.attendance_date}
+                            </span>
+                            <span className={`badge text-xs px-2 py-1 ${
+                              record.status === 'Present' 
+                                ? 'bg-green-100 text-green-800' 
+                                : 'bg-red-100 text-red-800'
+                            }`}>
+                              {record.status}
+                            </span>
+                          </div>
+                          <div className="text-xs text-[#7A7A73] mb-1">
+                            {record.start_time && record.end_time 
+                              ? `${record.start_time} - ${record.end_time}`
+                              : record.start_time || record.end_time || 'Time not recorded'}
+                          </div>
+                          <div className="text-xs text-[#57564F] truncate">
+                            {record.topic || 'No topic recorded'}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-6">
+                      <div className="w-10 h-10 mx-auto mb-2 bg-gray-100 rounded-full flex items-center justify-center">
+                        <span className="text-lg">📚</span>
+                      </div>
+                      <p className="text-xs text-[#7A7A73]">No sessions yet</p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Reports */}
+                <div className="card">
+                  <h3 className="text-lg font-semibold text-[#57564F] mb-4">
+                    Reports
+                  </h3>
+                  <ReportGenerator
+                    month={currentMonth.month}
+                    year={currentMonth.year}
+                    onGenerate={handleGenerateReport}
+                  />
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Recent Attendance Table */}
-          <div className="mt-8 card">
-            <h3 className="text-lg font-semibold text-[#57564F] mb-6">
-              Recent Sessions
-            </h3>
-            {attendanceData.length > 0 ? (
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b border-gray-200">
-                      <th className="text-left py-3 px-4 font-medium text-[#57564F]">Date</th>
-                      <th className="text-left py-3 px-4 font-medium text-[#57564F]">Status</th>
-                      <th className="text-left py-3 px-4 font-medium text-[#57564F]">Time</th>
-                      <th className="text-left py-3 px-4 font-medium text-[#57564F]">Topic</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {attendanceData.slice(0, 10).map((record, index) => (
-                      <tr key={`attendance-${record.id}-${index}`} className="hover:bg-gray-50 border-b border-gray-100">
-                        <td className="py-3 px-4 text-[#57564F]">
-                          {isInitialized ? new Date(record.attendance_date).toLocaleDateString() : record.attendance_date}
-                        </td>
-                        <td className="py-3 px-4">
-                          <span className={`badge ${
-                            record.status === 'Present' 
-                              ? 'bg-green-100 text-green-800' 
-                              : 'bg-red-100 text-red-800'
-                          }`}>
-                            {record.status}
-                          </span>
-                        </td>
-                        <td className="py-3 px-4 text-[#57564F]">
-                          {record.start_time && record.end_time 
-                            ? `${record.start_time} - ${record.end_time}`
-                            : record.start_time || record.end_time || (
-                              <span className="text-[#7A7A73] italic">Not recorded</span>
-                            )}
-                        </td>
-                        <td className="py-3 px-4 text-[#57564F]">
-                          {record.topic || <span className="text-[#7A7A73] italic">No topic recorded</span>}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            ) : (
-              <div className="text-center py-12">
-                <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-                  <span className="text-2xl">📚</span>
-                </div>
-                <p className="text-[#7A7A73]">No attendance records found</p>
-                <p className="text-[#7A7A73] text-sm mt-1">Mark your first attendance to get started</p>
-              </div>
-            )}
-          </div>
         </div>
       </main>
     </div>
