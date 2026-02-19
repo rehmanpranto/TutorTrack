@@ -98,8 +98,9 @@ export async function POST(request: NextRequest) {
           `SELECT COUNT(*) as count FROM attendance 
            WHERE student_id = $1 AND status = 'Present' 
            AND EXTRACT(MONTH FROM attendance_date) = $2 
-           AND EXTRACT(YEAR FROM attendance_date) = $3`,
-          [studentId, month, year]
+           AND EXTRACT(YEAR FROM attendance_date) = $3
+           AND attendance_date != $4`,
+          [studentId, month, year, date]
         );
         
         const presentCount = parseInt(countResult.rows[0].count);
@@ -142,13 +143,13 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { id, status, topic } = await request.json();
+    const { id, status, topic, startTime, endTime } = await request.json();
     
     const client = await pool.connect();
     try {
       const result = await client.query(
-        `UPDATE attendance SET status = $1, topic = $2 WHERE id = $3 RETURNING *`,
-        [status, topic, id]
+        `UPDATE attendance SET status = $1, topic = $2, start_time = $3, end_time = $4 WHERE id = $5 RETURNING *`,
+        [status, topic, startTime || null, endTime || null, id]
       );
 
       if (result.rows.length === 0) {

@@ -2,33 +2,30 @@ import React from 'react';
 
 export default function Loading() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-slate-800 flex items-center justify-center relative overflow-hidden">
-      {/* Sophisticated background pattern */}
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 mesh-gradient flex items-center justify-center relative overflow-hidden">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/3 left-1/5 w-28 h-28 border border-blue-200/20 dark:border-blue-600/10 rounded-full"></div>
-        <div className="absolute bottom-1/3 right-1/5 w-36 h-36 border border-purple-200/20 dark:border-purple-600/10 rounded-lg transform rotate-12"></div>
-        <div className="absolute top-2/3 right-2/3 w-20 h-20 bg-blue-100/30 dark:bg-blue-600/10 rounded-full"></div>
+        <div className="absolute top-1/3 left-1/5 w-60 h-60 bg-indigo-400/10 dark:bg-indigo-600/10 rounded-full blur-3xl animate-float"></div>
+        <div className="absolute bottom-1/3 right-1/5 w-72 h-72 bg-purple-400/10 dark:bg-purple-600/10 rounded-full blur-3xl animate-float-slow"></div>
       </div>
       
-      <div className="text-center bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-lg border border-gray-100 dark:border-gray-700 relative z-10">
-        <div className="w-20 h-20 mx-auto mb-6">
-          {/* Animated loading logo with orbital elements */}
-          <div className="w-full h-full relative flex items-center justify-center">
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full shadow-lg"></div>
-            <div className="absolute w-16 h-16 border-2 border-blue-300 dark:border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-            <div className="absolute w-6 h-6 bg-white dark:bg-gray-800 rounded-full shadow-md"></div>
-            <div className="absolute w-2 h-2 bg-purple-500 dark:bg-purple-400 rounded-full animate-pulse"></div>
+      <div className="text-center glass-strong rounded-3xl p-10 relative z-10 animate-scale-in">
+        <div className="w-16 h-16 mx-auto mb-6 relative">
+          <div className="w-full h-full bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-2xl shadow-xl shadow-indigo-500/30 flex items-center justify-center">
+            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253" />
+            </svg>
           </div>
+          <div className="absolute -inset-2 rounded-2xl border-2 border-indigo-300/40 dark:border-indigo-600/30 animate-spin" style={{ animationDuration: '3s' }}></div>
         </div>
-        <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent mb-4">
+        <h2 className="text-2xl font-extrabold gradient-text mb-4">
           TutorTrack
         </h2>
-        <div className="flex items-center justify-center space-x-2 mb-4">
-          <div className="w-3 h-3 bg-blue-600 dark:bg-blue-400 rounded-full animate-bounce"></div>
-          <div className="w-3 h-3 bg-purple-600 dark:bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-          <div className="w-3 h-3 bg-blue-600 dark:bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+        <div className="flex items-center justify-center space-x-1.5 mb-4">
+          <div className="w-2 h-2 bg-indigo-500 rounded-full animate-bounce"></div>
+          <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce" style={{ animationDelay: '0.15s' }}></div>
+          <div className="w-2 h-2 bg-pink-500 rounded-full animate-bounce" style={{ animationDelay: '0.3s' }}></div>
         </div>
-        <p className="text-gray-600 dark:text-gray-300">Loading your dashboard...</p>
+        <p className="text-sm text-gray-400 dark:text-gray-500">Loading your dashboard...</p>
       </div>
     </div>
   );

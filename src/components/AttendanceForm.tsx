@@ -69,13 +69,13 @@ export default function AttendanceForm({
   })();
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-5">
       {/* Selected Date */}
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+      <div>
+        <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
           Selected Date
         </label>
-        <div className="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-gray-100">
+        <div className="p-3.5 bg-gradient-to-r from-indigo-50/80 to-purple-50/80 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-xl border border-indigo-100 dark:border-indigo-800/30 text-gray-800 dark:text-gray-100 font-semibold text-sm">
           <ClientOnly fallback={selectedDate || 'Please select a date'}>
             {selectedDate ? displayDate : 'Please select a date'}
           </ClientOnly>
@@ -84,13 +84,13 @@ export default function AttendanceForm({
 
       {/* Status Selection */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-          Attendance Status
+        <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
+          Status
         </label>
-        <div className="grid grid-cols-2 gap-3">
-          <label className={`relative flex items-center p-4 border-2 rounded-xl cursor-pointer transition-all duration-200 ${
+        <div className="grid grid-cols-2 gap-2.5">
+          <label className={`relative flex items-center justify-center p-3.5 border-2 rounded-xl cursor-pointer transition-all duration-300 ${
             status === 'Present' 
-              ? 'border-green-500 bg-green-50 dark:bg-green-900/20 ring-2 ring-green-200 dark:ring-green-400/50' 
+              ? 'border-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 shadow-lg shadow-emerald-500/10' 
               : 'border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700/50 hover:border-gray-300 dark:hover:border-gray-500'
           } ${!canMarkPresent && status !== 'Present' ? 'opacity-50 cursor-not-allowed' : ''}`}>
             <input
@@ -101,21 +101,21 @@ export default function AttendanceForm({
               disabled={status !== 'Present' && !canMarkPresent}
               className="sr-only"
             />
-            <div className={`w-5 h-5 rounded-full border-2 mr-3 flex items-center justify-center ${
-              status === 'Present' ? 'border-green-500 bg-green-500' : 'border-gray-300 dark:border-gray-500'
-            }`}>
-              {status === 'Present' && (
-                <div className="w-2 h-2 bg-white rounded-full"></div>
-              )}
+            <div className="flex flex-col items-center space-y-1">
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${status === 'Present' ? 'bg-emerald-400 text-white' : 'bg-gray-100 dark:bg-gray-600 text-gray-400'} transition-all duration-300`}>
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <span className={`text-xs font-semibold ${status === 'Present' ? 'text-emerald-700 dark:text-emerald-300' : 'text-gray-500 dark:text-gray-400'}`}>
+                Present
+              </span>
             </div>
-            <span className={`text-sm font-medium ${status === 'Present' ? 'text-green-800 dark:text-green-300' : 'text-gray-700 dark:text-gray-300'}`}>
-              Present
-            </span>
           </label>
           
-          <label className={`relative flex items-center p-4 border-2 rounded-xl cursor-pointer transition-all duration-200 ${
+          <label className={`relative flex items-center justify-center p-3.5 border-2 rounded-xl cursor-pointer transition-all duration-300 ${
             status === 'Absent' 
-              ? 'border-red-500 bg-red-50 dark:bg-red-900/20 ring-2 ring-red-200 dark:ring-red-400/50' 
+              ? 'border-rose-400 bg-rose-50 dark:bg-rose-900/20 shadow-lg shadow-rose-500/10' 
               : 'border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700/50 hover:border-gray-300 dark:hover:border-gray-500'
           }`}>
             <input
@@ -125,32 +125,32 @@ export default function AttendanceForm({
               onChange={(e) => setStatus(e.target.value as 'Present' | 'Absent')}
               className="sr-only"
             />
-            <div className={`w-5 h-5 rounded-full border-2 mr-3 flex items-center justify-center ${
-              status === 'Absent' ? 'border-red-500 bg-red-500' : 'border-gray-300 dark:border-gray-500'
-            }`}>
-              {status === 'Absent' && (
-                <div className="w-2 h-2 bg-white rounded-full"></div>
-              )}
+            <div className="flex flex-col items-center space-y-1">
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${status === 'Absent' ? 'bg-rose-400 text-white' : 'bg-gray-100 dark:bg-gray-600 text-gray-400'} transition-all duration-300`}>
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </div>
+              <span className={`text-xs font-semibold ${status === 'Absent' ? 'text-rose-700 dark:text-rose-300' : 'text-gray-500 dark:text-gray-400'}`}>
+                Absent
+              </span>
             </div>
-            <span className={`text-sm font-medium ${status === 'Absent' ? 'text-red-800 dark:text-red-300' : 'text-gray-700 dark:text-gray-300'}`}>
-              Absent
-            </span>
           </label>
         </div>
       </div>
 
       {/* Topic Input */}
       {status === 'Present' && (
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        <div className="animate-fade-in">
+          <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
             Topic Covered
           </label>
           <input
             type="text"
             value={topic}
             onChange={(e) => setTopic(e.target.value)}
-            placeholder="Enter the topic covered today..."
-            className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-xl text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 bg-white dark:bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-all duration-200"
+            placeholder="What was taught today?"
+            className="input text-sm"
             required={status === 'Present'}
           />
         </div>
@@ -158,29 +158,27 @@ export default function AttendanceForm({
 
       {/* Time Input */}
       {status === 'Present' && (
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-3 animate-fade-in">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Start Time
+            <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
+              Start
             </label>
             <input
               type="time"
               value={startTime}
               onChange={(e) => setStartTime(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-xl text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 bg-white dark:bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-all duration-200"
-              placeholder="e.g., 3:30 PM"
+              className="input text-sm"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              End Time
+            <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
+              End
             </label>
             <input
               type="time"
               value={endTime}
               onChange={(e) => setEndTime(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-xl text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 bg-white dark:bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-all duration-200"
-              placeholder="e.g., 5:00 PM"
+              className="input text-sm"
             />
           </div>
         </div>
@@ -188,27 +186,34 @@ export default function AttendanceForm({
 
       {/* Monthly Limit Warning */}
       {!canMarkPresent && status === 'Present' && (
-        <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-400/50 rounded-lg p-3">
-          <p className="text-sm text-yellow-800 dark:text-yellow-300">
-            Monthly limit of 16 sessions reached. Cannot mark more present days this month.
+        <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700/50 rounded-xl p-3">
+          <p className="text-xs text-amber-700 dark:text-amber-300 font-medium">
+            ⚠️ Monthly limit of 16 sessions reached
           </p>
         </div>
       )}
 
       {/* Present Count */}
-      <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3">
-        <p className="text-sm text-gray-600 dark:text-gray-400">
-          Present days this month: <span className="font-semibold text-gray-900 dark:text-gray-100">{presentCount}/16</span>
-        </p>
+      <div className="bg-gray-50/80 dark:bg-gray-700/30 rounded-xl p-3 flex items-center justify-between">
+        <span className="text-xs text-gray-500 dark:text-gray-400 font-medium">Sessions this month</span>
+        <span className="text-sm font-bold text-gray-800 dark:text-gray-200">{presentCount}<span className="text-gray-400 dark:text-gray-500 font-normal">/16</span></span>
       </div>
 
       {/* Submit Button */}
       <button
         type="submit"
         disabled={isSubmitting || (!canMarkPresent && status === 'Present') || !selectedDate}
-        className="w-full inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium rounded-xl transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+        className="btn w-full py-3"
       >
-        {isSubmitting ? 'Saving...' : 'Save Attendance'}
+        {isSubmitting ? (
+          <>
+            <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Saving...
+          </>
+        ) : 'Save Attendance'}
       </button>
     </form>
   );

@@ -1,14 +1,13 @@
 'use client';
 
 import { useSession, signIn } from 'next-auth/react';
-import { useState, useEffect, useCallback, Suspense } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Header from '../components/Header';
 import Calendar from '../components/Calendar';
 import AttendanceForm from '../components/AttendanceForm';
 import ReportGenerator from '../components/ReportGenerator';
 import Loading from '../components/Loading';
-import ClientOnly from '../components/ClientOnly';
-import HydrationSafe from '../components/HydrationSafe';
+
 import NoSSR from '../components/NoSSR';
 import { AttendanceRecord } from '../types';
 import { formatDate, formatDateSafe, formatMonthYearSafe } from '../lib/utils';
@@ -168,8 +167,11 @@ export default function Dashboard() {
   // Show loading screen while checking authentication
   if (status === 'loading') {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-slate-800">
-        <div className="animate-spin rounded-full h-12 w-12 border-3 border-blue-200 dark:border-blue-400 border-t-blue-600 dark:border-t-blue-300"></div>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950 mesh-gradient">
+        <div className="relative">
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 animate-pulse shadow-xl shadow-indigo-500/30"></div>
+          <div className="absolute inset-0 w-14 h-14 rounded-2xl border-2 border-indigo-300/50 animate-spin" style={{ animationDuration: '3s' }}></div>
+        </div>
       </div>
     );
   }
@@ -182,38 +184,38 @@ export default function Dashboard() {
   // Show sign in page if not authenticated
   if (!session) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-slate-800 relative overflow-hidden">
-        {/* Elegant background pattern */}
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950 mesh-gradient relative overflow-hidden">
+        {/* Animated floating shapes */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-1/4 left-1/4 w-40 h-40 border border-blue-200/20 dark:border-blue-600/10 rounded-full"></div>
-          <div className="absolute bottom-1/4 right-1/4 w-32 h-32 border border-purple-200/20 dark:border-purple-600/10 rounded-lg transform rotate-45"></div>
-          <div className="absolute top-1/2 right-1/2 w-24 h-24 bg-blue-100/30 dark:bg-blue-600/10 rounded-full"></div>
+          <div className="absolute top-1/4 left-1/6 w-72 h-72 bg-indigo-400/10 dark:bg-indigo-600/10 rounded-full blur-3xl animate-float"></div>
+          <div className="absolute bottom-1/4 right-1/6 w-96 h-96 bg-purple-400/10 dark:bg-purple-600/10 rounded-full blur-3xl animate-float-slow"></div>
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-pink-400/5 dark:bg-pink-600/5 rounded-full blur-3xl animate-float-slower"></div>
         </div>
         
-        <div className="max-w-md w-full space-y-8 text-center bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-lg border border-gray-100 dark:border-gray-700 relative z-10">
-          <div className="space-y-4">
-            <div className="w-20 h-20 mx-auto">
-              {/* Modern hexagonal logo with animated elements */}
-              <div className="w-full h-full relative flex items-center justify-center">
-                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 transform rotate-45 rounded-lg shadow-xl"></div>
-                <div className="absolute w-10 h-10 bg-white dark:bg-gray-800 rounded-lg shadow-lg"></div>
-                <div className="absolute w-4 h-4 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full animate-ping"></div>
-                <div className="absolute w-2 h-2 bg-blue-600 dark:bg-blue-400 rounded-full"></div>
-              </div>
+        <div className="max-w-md w-full space-y-8 text-center glass-strong rounded-3xl p-10 animate-scale-in relative z-10">
+          <div className="space-y-5">
+            <div className="w-20 h-20 mx-auto bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-xl shadow-indigo-500/30 transform rotate-3">
+              <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253" />
+              </svg>
             </div>
-            <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
+            <h2 className="text-4xl font-extrabold gradient-text">
               TutorTrack
             </h2>
-            <p className="text-gray-600 dark:text-gray-300">
-              Please sign in to access your tutoring attendance tracker
+            <p className="text-gray-500 dark:text-gray-400 text-lg">
+              Your intelligent tutoring companion
             </p>
           </div>
           <button
             onClick={() => signIn()}
-            className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium py-3 px-6 rounded-xl transition-all duration-200 transform hover:scale-105"
+            className="btn w-full py-4 text-base shadow-xl shadow-indigo-500/20"
           >
-            Sign In to Continue
+            Get Started
+            <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+            </svg>
           </button>
+          <p className="text-xs text-gray-400 dark:text-gray-500">Secure authentication powered by NextAuth</p>
         </div>
       </div>
     );
@@ -225,111 +227,127 @@ export default function Dashboard() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-slate-800 relative overflow-hidden" suppressHydrationWarning>
-      {/* Modern geometric background pattern */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-32 h-32 border border-blue-200/30 dark:border-blue-600/20 rounded-full"></div>
-        <div className="absolute top-40 right-20 w-24 h-24 border border-purple-200/30 dark:border-purple-600/20 rounded-lg transform rotate-45"></div>
-        <div className="absolute bottom-20 left-1/4 w-16 h-16 bg-blue-100/40 dark:bg-blue-600/10 rounded-full"></div>
-        <div className="absolute bottom-40 right-1/3 w-20 h-20 border-2 border-purple-200/40 dark:border-purple-600/20 rounded-lg transform rotate-12"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 border border-blue-100/20 dark:border-blue-700/20 rounded-full"></div>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 mesh-gradient relative" suppressHydrationWarning>
+      {/* Subtle floating accent shapes */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-96 h-96 bg-indigo-400/5 dark:bg-indigo-600/5 rounded-full blur-3xl animate-float"></div>
+        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-purple-400/5 dark:bg-purple-600/5 rounded-full blur-3xl animate-float-slow"></div>
       </div>
       
       <Header userName={session.user?.name || 'User'} />
       
-      <main className="container mx-auto px-6 py-6 relative z-10">
+      <main className="container mx-auto px-4 sm:px-6 py-6 relative z-10">
         <div className="max-w-7xl mx-auto">
           {/* Dashboard Header */}
-          <div className="mb-8">
-            <div className="flex items-center justify-between">
+          <div className="mb-8 animate-fade-in">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Dashboard</h1>
-                <p className="text-gray-600 dark:text-gray-300 mt-1">Track your tutoring sessions and progress</p>
+                <h1 className="text-3xl font-extrabold text-gray-900 dark:text-gray-100 tracking-tight">Dashboard</h1>
+                <p className="text-gray-500 dark:text-gray-400 mt-1">Track your tutoring sessions and progress</p>
               </div>
-              <div className="flex items-center space-x-3 bg-white dark:bg-gray-800 rounded-xl p-3 shadow-sm border border-gray-100 dark:border-gray-700">
+              <div className="flex items-center space-x-2 glass-strong rounded-2xl p-1.5">
                 <button
                   onClick={() => handleMonthChange('prev')}
-                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                  className="p-2.5 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-xl transition-all duration-300 text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400"
                 >
-                  ←
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" /></svg>
                 </button>
-                <div className="px-4 py-2 bg-blue-50 dark:bg-blue-900/50 rounded-lg">
+                <div className="px-5 py-2 bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/40 dark:to-purple-900/40 rounded-xl min-w-[160px] text-center">
                   <NoSSR
                     fallback={
-                      <span className="text-sm font-medium text-blue-900 dark:text-blue-100">
+                      <span className="text-sm font-semibold text-indigo-700 dark:text-indigo-300">
                         {`${currentMonth.year}-${currentMonth.month.toString().padStart(2, '0')}`}
                       </span>
                     }
                   >
-                    <span className="text-sm font-medium text-blue-900 dark:text-blue-100">
+                    <span className="text-sm font-semibold text-indigo-700 dark:text-indigo-300">
                       {formatMonthYearSafe(currentMonth.year, currentMonth.month)}
                     </span>
                   </NoSSR>
                 </div>
                 <button
                   onClick={() => handleMonthChange('next')}
-                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                  className="p-2.5 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-xl transition-all duration-300 text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400"
                 >
-                  →
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
                 </button>
               </div>
             </div>
           </div>
 
           {/* Stats Cards */}
-          <div className="grid grid-cols-3 gap-6 mb-8">
-            <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-              <div className="flex items-center">
-                <div className="w-12 h-12 bg-gradient-to-br from-green-100 to-green-200 dark:from-green-900/30 dark:to-green-800/30 rounded-2xl flex items-center justify-center relative">
-                  <div className="w-8 h-8 border-2 border-green-500 dark:border-green-400 rounded-full flex items-center justify-center">
-                    <div className="w-3 h-3 bg-green-500 dark:bg-green-400 rounded-full"></div>
-                  </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-8">
+            <div className="glass-strong rounded-2xl p-6 hover:shadow-xl hover:shadow-emerald-500/5 transition-all duration-500 hover:-translate-y-1 animate-fade-in-up group">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Present Days</p>
+                  <p className="text-3xl font-extrabold text-gray-900 dark:text-gray-100 mt-1">{presentCount}</p>
                 </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Present Days</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{presentCount}</p>
-                </div>
-              </div>
-            </div>
-            <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-              <div className="flex items-center">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900/30 dark:to-blue-800/30 rounded-2xl flex items-center justify-center relative">
-                  <div className="w-8 h-8 border-2 border-blue-500 dark:border-blue-400 rounded-lg flex items-center justify-center">
-                    <div className="w-2 h-4 bg-blue-500 dark:bg-blue-400 rounded-sm"></div>
-                    <div className="w-1 h-3 bg-blue-500 dark:bg-blue-400 rounded-sm ml-0.5"></div>
-                  </div>
-                </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Monthly Limit</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">16</p>
+                <div className="w-14 h-14 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-500/20 group-hover:scale-110 transition-transform duration-500">
+                  <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
                 </div>
               </div>
+              <div className="mt-4 w-full bg-gray-100 dark:bg-gray-700/50 rounded-full h-2 overflow-hidden">
+                <div className="bg-gradient-to-r from-emerald-400 to-teal-500 h-2 rounded-full transition-all duration-700" style={{ width: `${Math.min(100, (presentCount / 16) * 100)}%` }}></div>
+              </div>
             </div>
-            <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-              <div className="flex items-center">
-                <div className="w-12 h-12 bg-gradient-to-br from-purple-100 to-purple-200 dark:from-purple-900/30 dark:to-purple-800/30 rounded-2xl flex items-center justify-center relative">
-                  <div className="w-8 h-8 border-2 border-purple-500 dark:border-purple-400 rounded-lg flex items-center justify-center">
-                    <div className="flex space-x-0.5">
-                      <div className="w-1 h-2 bg-purple-500 dark:bg-purple-400 rounded-sm"></div>
-                      <div className="w-1 h-3 bg-purple-500 dark:bg-purple-400 rounded-sm"></div>
-                      <div className="w-1 h-1 bg-purple-500 dark:bg-purple-400 rounded-sm mt-2"></div>
-                    </div>
-                  </div>
+
+            <div className="glass-strong rounded-2xl p-6 hover:shadow-xl hover:shadow-indigo-500/5 transition-all duration-500 hover:-translate-y-1 animate-fade-in-up group" style={{ animationDelay: '0.1s' }}>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Monthly Limit</p>
+                  <p className="text-3xl font-extrabold text-gray-900 dark:text-gray-100 mt-1">16</p>
                 </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Remaining</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{Math.max(0, 16 - presentCount)}</p>
+                <div className="w-14 h-14 bg-gradient-to-br from-indigo-400 to-blue-500 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-500/20 group-hover:scale-110 transition-transform duration-500">
+                  <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
                 </div>
+              </div>
+              <div className="mt-4 flex items-center text-sm text-gray-500 dark:text-gray-400">
+                <span className="font-medium text-indigo-600 dark:text-indigo-400">{presentCount}/16</span>
+                <span className="ml-1">sessions used</span>
+              </div>
+            </div>
+
+            <div className="glass-strong rounded-2xl p-6 hover:shadow-xl hover:shadow-purple-500/5 transition-all duration-500 hover:-translate-y-1 animate-fade-in-up group" style={{ animationDelay: '0.2s' }}>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Remaining</p>
+                  <p className="text-3xl font-extrabold text-gray-900 dark:text-gray-100 mt-1">{Math.max(0, 16 - presentCount)}</p>
+                </div>
+                <div className="w-14 h-14 bg-gradient-to-br from-purple-400 to-pink-500 rounded-2xl flex items-center justify-center shadow-lg shadow-purple-500/20 group-hover:scale-110 transition-transform duration-500">
+                  <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </div>
+              </div>
+              <div className="mt-4 flex items-center text-sm">
+                {16 - presentCount > 0 ? (
+                  <span className="text-emerald-600 dark:text-emerald-400 font-medium">● Available</span>
+                ) : (
+                  <span className="text-rose-600 dark:text-rose-400 font-medium">● Limit reached</span>
+                )}
               </div>
             </div>
           </div>
 
           {/* Main Content Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-            {/* Calendar - Takes up 3 columns */}
-            <div className="lg:col-span-3">
-              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-8">
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-6">Calendar</h2>
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8">
+            {/* Calendar */}
+            <div className="lg:col-span-3 animate-fade-in-up" style={{ animationDelay: '0.15s' }}>
+              <div className="glass-strong rounded-2xl p-6 sm:p-8">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Calendar</h2>
+                  <div className="flex items-center space-x-1.5 text-xs text-gray-400">
+                    <span className="w-2 h-2 bg-emerald-400 rounded-full"></span>
+                    <span>Present</span>
+                    <span className="w-2 h-2 bg-rose-400 rounded-full ml-3"></span>
+                    <span>Absent</span>
+                  </div>
+                </div>
                 <Calendar
                   key={`calendar-${currentMonth.year}-${currentMonth.month}`}
                   month={currentMonth.month}
@@ -340,12 +358,13 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* Sidebar - Takes up 1 column */}
-            <div className="space-y-6">
+            {/* Sidebar */}
+            <div className="space-y-6 animate-fade-in-up" style={{ animationDelay: '0.25s' }}>
               {/* Attendance Form */}
-              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Mark Attendance</h3>
+              <div className="glass-strong rounded-2xl p-6">
+                <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4">Mark Attendance</h3>
                 <AttendanceForm
+                  key={`form-${selectedDate}`}
                   selectedDate={selectedDate}
                   onSubmit={handleAttendanceSubmit}
                   presentCount={presentCount}
@@ -360,58 +379,59 @@ export default function Dashboard() {
               </div>
 
               {/* Recent Sessions */}
-              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Recent Sessions</h3>
+              <div className="glass-strong rounded-2xl p-6">
+                <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4">Recent Sessions</h3>
                 {attendanceData.length > 0 ? (
-                  <div className="space-y-3">
+                  <div className="space-y-2.5">
                     {attendanceData.slice(0, 4).map((record, index) => (
-                      <div key={`attendance-${record.id}-${index}`} className="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                        <div className="flex items-center justify-between mb-2">
+                      <div key={`attendance-${record.id}-${index}`} className="p-3.5 bg-gray-50/80 dark:bg-gray-700/30 rounded-xl hover:bg-white dark:hover:bg-gray-700/50 border border-transparent hover:border-gray-200 dark:hover:border-gray-600 transition-all duration-300 group">
+                        <div className="flex items-center justify-between mb-1.5">
                           <NoSSR
                             fallback={
-                              <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                              <span className="text-sm font-semibold text-gray-800 dark:text-gray-100">
                                 {formatDateSafe(record.attendance_date, 'short')}
                               </span>
                             }
                           >
-                            <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                            <span className="text-sm font-semibold text-gray-800 dark:text-gray-100">
                               {formatDateSafe(record.attendance_date, 'short')}
                             </span>
                           </NoSSR>
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${
                             record.status === 'Present' 
-                              ? 'bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300' 
-                              : 'bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-300'
+                              ? 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300' 
+                              : 'bg-rose-100 dark:bg-rose-900/40 text-rose-700 dark:text-rose-300'
                           }`}>
                             {record.status}
                           </span>
                         </div>
-                        <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">
+                        <div className="text-xs text-gray-400 dark:text-gray-500 mb-1">
                           {record.start_time && record.end_time 
-                            ? `${record.start_time} - ${record.end_time}`
+                            ? `${record.start_time} – ${record.end_time}`
                             : 'Time not recorded'}
                         </div>
-                        <div className="text-sm text-gray-700 dark:text-gray-300 truncate">
+                        <div className="text-sm text-gray-600 dark:text-gray-300 truncate">
                           {record.topic || 'No topic recorded'}
                         </div>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <div className="text-center py-8">
-                    <div className="w-12 h-12 mx-auto mb-3 bg-gray-100 dark:bg-gray-700/50 rounded-full flex items-center justify-center">
-                      <svg className="w-6 h-6 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                  <div className="text-center py-10">
+                    <div className="w-14 h-14 mx-auto mb-4 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 rounded-2xl flex items-center justify-center">
+                      <svg className="w-7 h-7 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253" />
                       </svg>
                     </div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">No sessions yet</p>
+                    <p className="text-sm font-medium text-gray-400 dark:text-gray-500">No sessions yet</p>
+                    <p className="text-xs text-gray-400 dark:text-gray-600 mt-1">Click a date to get started</p>
                   </div>
                 )}
               </div>
 
               {/* Reports */}
-              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Generate Reports</h3>
+              <div className="glass-strong rounded-2xl p-6">
+                <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4">Generate Reports</h3>
                 <ReportGenerator
                   month={currentMonth.month}
                   year={currentMonth.year}

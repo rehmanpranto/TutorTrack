@@ -2,9 +2,10 @@
 
 import { signIn, getProviders } from 'next-auth/react';
 import { useState, useEffect } from 'react';
-import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 export default function SignIn() {
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -33,6 +34,8 @@ export default function SignIn() {
 
       if (result?.error) {
         setError('Invalid credentials. Please try again.');
+      } else {
+        router.push('/');
       }
     } catch {
       setError('An error occurred. Please try again.');
@@ -42,63 +45,68 @@ export default function SignIn() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50">
-      <div className="max-w-md w-full mx-4">
-        <div className="bg-white rounded-3xl p-8 shadow-lg border border-gray-100">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950 mesh-gradient relative overflow-hidden">
+      {/* Animated background shapes */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 -left-20 w-80 h-80 bg-indigo-400/10 dark:bg-indigo-600/10 rounded-full blur-3xl animate-float"></div>
+        <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-purple-400/10 dark:bg-purple-600/10 rounded-full blur-3xl animate-float-slow"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-pink-400/5 dark:bg-pink-600/5 rounded-full blur-3xl animate-float-slower"></div>
+      </div>
+
+      <div className="max-w-md w-full mx-4 relative z-10">
+        <div className="glass-strong rounded-3xl p-8 sm:p-10 animate-scale-in">
           {/* Header */}
           <div className="text-center mb-8">
-            <div className="w-20 h-20 mx-auto mb-4">
-              {/* Elegant login logo with layered design */}
-              <div className="w-full h-full relative flex items-center justify-center">
-                <div className="w-16 h-16 bg-gradient-to-tr from-blue-500 via-purple-500 to-blue-600 rounded-full shadow-xl"></div>
-                <div className="absolute w-10 h-10 bg-white/90 dark:bg-gray-800/90 rounded-full shadow-lg border-2 border-white/50"></div>
-                <div className="absolute">
-                  <svg className="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                  </svg>
-                </div>
-              </div>
+            <div className="w-16 h-16 mx-auto mb-5 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-xl shadow-indigo-500/30 transform rotate-3">
+              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253" />
+              </svg>
             </div>
-            <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              TutorTrack
+            <h2 className="text-3xl font-extrabold gradient-text">
+              Welcome back
             </h2>
-            <p className="text-gray-600 mt-2">
-              Sign in to access your attendance tracker
+            <p className="text-gray-500 dark:text-gray-400 mt-2">
+              Sign in to your TutorTrack account
             </p>
           </div>
 
           {/* Error Message */}
           {error && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-6">
-              <p className="text-sm text-red-800">{error}</p>
+            <div className="bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-700/50 rounded-xl p-3.5 mb-6 animate-fade-in">
+              <p className="text-sm text-rose-700 dark:text-rose-300 font-medium flex items-center">
+                <svg className="w-4 h-4 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                {error}
+              </p>
             </div>
           )}
 
           {/* Sign In Form */}
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
                 Email
               </label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
+                placeholder="you@example.com"
                 className="input"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
                 Password
               </label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter your password"
+                placeholder="••••••••"
                 className="input"
                 required
               />
@@ -107,41 +115,60 @@ export default function SignIn() {
             <button
               type="submit"
               disabled={isLoading}
-              className="btn w-full"
+              className="btn w-full py-3.5"
             >
-              {isLoading ? 'Signing in...' : 'Sign In'}
+              {isLoading ? (
+                <>
+                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Signing in...
+                </>
+              ) : (
+                <>
+                  Sign In
+                  <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                  </svg>
+                </>
+              )}
             </button>
           </form>
 
-          {/* Divider */}
-          <div className="mt-6 mb-6">
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-200"></div>
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-[#7A7A73]">Or</span>
-              </div>
-            </div>
-          </div>
-
           {/* OAuth Providers */}
-          <div className="space-y-3">
-            {providers && Object.values(providers).map((provider: { id: string; name: string }) => {
-              if (provider.id === 'credentials') return null;
-              
-              return (
-                <button
-                  key={provider.name}
-                  onClick={() => signIn(provider.id)}
-                  className="btn w-full flex items-center justify-center space-x-2"
-                >
-                  <span>Continue with {provider.name}</span>
-                </button>
-              );
-            })}
-          </div>
+          {providers && Object.values(providers).some(p => p.id !== 'credentials') && (
+            <>
+              <div className="my-6">
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-gray-200 dark:border-gray-700"></div>
+                  </div>
+                  <div className="relative flex justify-center text-xs">
+                    <span className="px-3 bg-white/80 dark:bg-gray-800/80 text-gray-400 uppercase tracking-wider font-medium">or continue with</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-2.5">
+                {Object.values(providers).map((provider: { id: string; name: string }) => {
+                  if (provider.id === 'credentials') return null;
+                  
+                  return (
+                    <button
+                      key={provider.name}
+                      onClick={() => signIn(provider.id)}
+                      className="btn-secondary w-full py-3"
+                    >
+                      <span className="font-semibold">{provider.name}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </>
+          )}
         </div>
+        <p className="text-center text-xs text-gray-400 dark:text-gray-600 mt-6">Secured with NextAuth.js encryption</p>
       </div>
     </div>
   );
