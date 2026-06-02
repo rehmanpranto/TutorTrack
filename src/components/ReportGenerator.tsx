@@ -4,18 +4,19 @@ import { getMonthName } from '../lib/utils';
 interface ReportGeneratorProps {
   month: number;
   year: number;
-  onGenerate: (format: 'pdf' | 'excel', selectedMonth: number, selectedYear: number) => Promise<void>;
+  onGenerate: (format: 'pdf' | 'excel', selectedMonth?: number, selectedYear?: number, period?: 'month' | 'year') => Promise<void>;
 }
 
 export default function ReportGenerator({ month, year, onGenerate }: ReportGeneratorProps) {
   const [isGenerating, setIsGenerating] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState(month);
   const [selectedYear, setSelectedYear] = useState(year);
+  const [period, setPeriod] = useState<'month' | 'year'>('month');
 
   const handleGenerateReport = async (format: 'pdf' | 'excel') => {
     setIsGenerating(true);
     try {
-      await onGenerate(format, selectedMonth, selectedYear);
+      await onGenerate(format, selectedMonth, selectedYear, period);
     } catch (error) {
       console.error('Failed to generate report:', error);
       alert('Failed to generate report. Please try again.');
@@ -24,7 +25,6 @@ export default function ReportGenerator({ month, year, onGenerate }: ReportGener
     }
   };
 
-  // Generate years for dropdown (current year and 2 years back)
   const currentYear = new Date().getFullYear();
   const availableYears = [];
   for (let i = 0; i <= 2; i++) {
@@ -33,27 +33,55 @@ export default function ReportGenerator({ month, year, onGenerate }: ReportGener
 
   return (
     <div className="space-y-4">
+      {/* Period Toggle */}
+      <div className="grid grid-cols-2 gap-2">
+        <button
+          type="button"
+          onClick={() => setPeriod('month')}
+          className={`py-2 px-3 rounded-xl text-xs font-semibold transition-all duration-300 ${
+            period === 'month'
+              ? 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-md shadow-indigo-500/20'
+              : 'bg-gray-100 dark:bg-gray-700/40 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700/60'
+          }`}
+        >
+          Monthly
+        </button>
+        <button
+          type="button"
+          onClick={() => setPeriod('year')}
+          className={`py-2 px-3 rounded-xl text-xs font-semibold transition-all duration-300 ${
+            period === 'year'
+              ? 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-md shadow-indigo-500/20'
+              : 'bg-gray-100 dark:bg-gray-700/40 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700/60'
+          }`}
+        >
+          Annual
+        </button>
+      </div>
+
       {/* Month/Year Selection */}
       <div className="bg-gray-50/80 dark:bg-gray-700/30 rounded-xl p-4 space-y-3">
         <h4 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
           Report Period
         </h4>
-        
-        <div className="grid grid-cols-2 gap-2.5">
-          <div>
-            <select
-              value={selectedMonth}
-              onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
-              className="input text-sm py-2.5"
-            >
-              {Array.from({ length: 12 }, (_, i) => i + 1).map(monthNum => (
-                <option key={monthNum} value={monthNum}>
-                  {getMonthName(monthNum)}
-                </option>
-              ))}
-            </select>
-          </div>
-          
+
+        <div className={`grid gap-2.5 ${period === 'month' ? 'grid-cols-2' : 'grid-cols-1'}`}>
+          {period === 'month' && (
+            <div>
+              <select
+                value={selectedMonth}
+                onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
+                className="input text-sm py-2.5"
+              >
+                {Array.from({ length: 12 }, (_, i) => i + 1).map(monthNum => (
+                  <option key={monthNum} value={monthNum}>
+                    {getMonthName(monthNum)}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
           <div>
             <select
               value={selectedYear}
@@ -68,9 +96,9 @@ export default function ReportGenerator({ month, year, onGenerate }: ReportGener
             </select>
           </div>
         </div>
-        
+
         <p className="text-xs text-gray-400 dark:text-gray-500 font-medium">
-          {getMonthName(selectedMonth)} {selectedYear}
+          {period === 'month' ? `${getMonthName(selectedMonth)} ${selectedYear}` : `Full year ${selectedYear}`}
         </p>
       </div>
 

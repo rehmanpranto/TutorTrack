@@ -7,6 +7,7 @@ interface AttendanceFormProps {
   onSubmit: (data: { date: string; status: 'Present' | 'Absent'; topic: string; startTime?: string; endTime?: string }) => void;
   presentCount: number;
   canMarkPresent: boolean;
+  monthlyLimit?: number;
   initialData?: {
     status: 'Present' | 'Absent';
     topic: string;
@@ -15,12 +16,13 @@ interface AttendanceFormProps {
   };
 }
 
-export default function AttendanceForm({ 
-  selectedDate, 
-  onSubmit, 
-  presentCount, 
+export default function AttendanceForm({
+  selectedDate,
+  onSubmit,
+  presentCount,
   canMarkPresent,
-  initialData 
+  monthlyLimit = 16,
+  initialData
 }: AttendanceFormProps) {
   const [status, setStatus] = useState<'Present' | 'Absent'>(initialData?.status || 'Present');
   const [topic, setTopic] = useState(initialData?.topic || '');
@@ -188,7 +190,7 @@ export default function AttendanceForm({
       {!canMarkPresent && status === 'Present' && (
         <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700/50 rounded-xl p-3">
           <p className="text-xs text-amber-700 dark:text-amber-300 font-medium">
-            ⚠️ Monthly limit of 16 sessions reached
+            ⚠️ Monthly limit of {monthlyLimit} sessions reached
           </p>
         </div>
       )}
@@ -196,7 +198,7 @@ export default function AttendanceForm({
       {/* Present Count */}
       <div className="bg-gray-50/80 dark:bg-gray-700/30 rounded-xl p-3 flex items-center justify-between">
         <span className="text-xs text-gray-500 dark:text-gray-400 font-medium">Sessions this month</span>
-        <span className="text-sm font-bold text-gray-800 dark:text-gray-200">{presentCount}<span className="text-gray-400 dark:text-gray-500 font-normal">/16</span></span>
+        <span className="text-sm font-bold text-gray-800 dark:text-gray-200">{presentCount}<span className="text-gray-400 dark:text-gray-500 font-normal">/{monthlyLimit}</span></span>
       </div>
 
       {/* Submit Button */}

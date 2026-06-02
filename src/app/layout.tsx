@@ -24,8 +24,23 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const themeScript = `
+    (function() {
+      try {
+        var stored = localStorage.getItem('tutortrack-theme');
+        var theme = stored || 'system';
+        var resolved = theme === 'system'
+          ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+          : theme;
+        if (resolved === 'dark') document.documentElement.classList.add('dark');
+      } catch (e) {}
+    })();
+  `;
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body className={openSans.className} suppressHydrationWarning>
         <ErrorBoundary>
           <Providers>

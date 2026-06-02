@@ -19,9 +19,11 @@ async function createTutorUser() {
         id SERIAL PRIMARY KEY,
         name VARCHAR(100) NOT NULL,
         email VARCHAR(100),
+        monthly_limit INT DEFAULT 16,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
+    await client.query(`ALTER TABLE students ADD COLUMN IF NOT EXISTS monthly_limit INT DEFAULT 16`);
 
     // Create attendance table
     await client.query(`

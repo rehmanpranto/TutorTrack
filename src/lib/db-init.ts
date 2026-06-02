@@ -16,9 +16,13 @@ export async function initializeDatabase() {
         id SERIAL PRIMARY KEY,
         name VARCHAR(100) NOT NULL,
         email VARCHAR(100),
+        monthly_limit INT DEFAULT 16,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
+
+    // Migration: add monthly_limit to existing students table
+    await client.query(`ALTER TABLE students ADD COLUMN IF NOT EXISTS monthly_limit INT DEFAULT 16`);
 
     // Create attendance table
     await client.query(`
@@ -102,12 +106,22 @@ export async function getStudentId(): Promise<number> {
   if (cachedStudentId !== null) {
     return cachedStudentId;
   }
-  
+
   const client = await pool.connect();
   try {
     const result = await client.query('SELECT id FROM students LIMIT 1');
     cachedStudentId = result.rows[0]?.id || 1;
     return cachedStudentId!; // Non-null assertion since we ensure it's set above
+  } finally {
+    client.release();
+  }
+}
+
+export async function getMonthlyLimit(studentId: number): Promise<number> {
+  const client = await pool.connect();
+  try {
+    const result = await client.query('SELECT monthly_limit FROM students WHERE id = $1', [studentId]);
+    return result.rows[0]?.monthly_limit ?? 16;
   } finally {
     client.release();
   }

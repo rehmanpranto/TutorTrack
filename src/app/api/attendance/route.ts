@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../../../lib/auth';
 import pool from '../../../lib/db';
-import { getStudentId } from '../../../lib/db-init';
+import { getStudentId, getMonthlyLimit } from '../../../lib/db-init';
 
 export async function GET(request: NextRequest) {
   try {
@@ -17,54 +17,74 @@ export async function GET(request: NextRequest) {
     const year = searchParams.get('year');
 
     const studentId = await getStudentId();
+    const monthlyLimit = await getMonthlyLimit(studentId);
     const client = await pool.connect();
 
     try {
+      const search = searchParams.get('search');
+      const status = searchParams.get('status');
+      const from = searchParams.get('from');
+      const to = searchParams.get('to');
+
       let query = `
-        SELECT id, attendance_date::text as attendance_date, status, topic, start_time, end_time 
-        FROM attendance 
+        SELECT id, attendance_date::text as attendance_date, status, topic, start_time, end_time
+        FROM attendance
         WHERE student_id = $1
       `;
       const params: (string | number)[] = [studentId];
+      let i = 2;
 
       if (month && year) {
-        query += ` AND EXTRACT(MONTH FROM attendance_date) = $2 AND EXTRACT(YEAR FROM attendance_date) = $3`;
+        query += ` AND EXTRACT(MONTH FROM attendance_date) = $${i++} AND EXTRACT(YEAR FROM attendance_date) = $${i++}`;
         params.push(parseInt(month), parseInt(year));
+      }
+      if (search) {
+        query += ` AND topic ILIKE $${i++}`;
+        params.push(`%${search}%`);
+      }
+      if (status === 'Present' || status === 'Absent') {
+        query += ` AND status = $${i++}`;
+        params.push(status);
+      }
+      if (from) {
+        query += ` AND attendance_date >= $${i++}`;
+        params.push(from);
+      }
+      if (to) {
+        query += ` AND attendance_date <= $${i++}`;
+        params.push(to);
       }
 
       query += ` ORDER BY attendance_date DESC`;
 
       const result = await client.query(query, params);
-      
+
       // Calculate present count for the current month (always use current month if no month/year specified)
       let presentCount = 0;
       if (month && year) {
-        // If month/year filters are applied, count present records in the filtered results
         presentCount = result.rows.filter(row => row.status === 'Present').length;
       } else {
-        // If no filters, get present count for current month
         const currentDate = new Date();
         const currentMonth = currentDate.getMonth() + 1;
         const currentYear = currentDate.getFullYear();
-        
+
         const presentCountResult = await client.query(
-          `SELECT COUNT(*) as count FROM attendance 
-           WHERE student_id = $1 AND status = 'Present' 
-           AND EXTRACT(MONTH FROM attendance_date) = $2 
+          `SELECT COUNT(*) as count FROM attendance
+           WHERE student_id = $1 AND status = 'Present'
+           AND EXTRACT(MONTH FROM attendance_date) = $2
            AND EXTRACT(YEAR FROM attendance_date) = $3`,
           [studentId, currentMonth, currentYear]
         );
         presentCount = parseInt(presentCountResult.rows[0].count);
       }
-      
-      // Return structured response
+
       const responseData = {
         records: result.rows,
         presentCount: presentCount,
+        monthlyLimit,
         totalRecords: result.rows.length
       };
-      
-      // Return structured response
+
       return NextResponse.json(responseData);
     } finally {
       client.release();
@@ -85,28 +105,28 @@ export async function POST(request: NextRequest) {
 
     const { date, status, topic, startTime, endTime } = await request.json();
     const studentId = await getStudentId();
-    
-    // Check if this month already has 16 present entries
+    const monthlyLimit = await getMonthlyLimit(studentId);
+
     if (status === 'Present') {
       const attendanceDate = new Date(date);
       const month = attendanceDate.getMonth() + 1;
       const year = attendanceDate.getFullYear();
-      
+
       const client = await pool.connect();
       try {
         const countResult = await client.query(
-          `SELECT COUNT(*) as count FROM attendance 
-           WHERE student_id = $1 AND status = 'Present' 
-           AND EXTRACT(MONTH FROM attendance_date) = $2 
+          `SELECT COUNT(*) as count FROM attendance
+           WHERE student_id = $1 AND status = 'Present'
+           AND EXTRACT(MONTH FROM attendance_date) = $2
            AND EXTRACT(YEAR FROM attendance_date) = $3
            AND attendance_date != $4`,
           [studentId, month, year, date]
         );
-        
+
         const presentCount = parseInt(countResult.rows[0].count);
-        if (presentCount >= 16) {
-          return NextResponse.json({ 
-            error: 'Maximum 16 present entries per month reached' 
+        if (presentCount >= monthlyLimit) {
+          return NextResponse.json({
+            error: `Maximum ${monthlyLimit} present entries per month reached`
           }, { status: 400 });
         }
       } finally {
