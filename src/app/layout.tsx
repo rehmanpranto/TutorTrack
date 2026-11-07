@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
-import { Open_Sans } from "next/font/google";
+import { Montserrat } from "next/font/google";
 import "./globals.css";
 import Providers from "../components/Providers";
 import { ErrorBoundary } from "../components/ErrorBoundary";
 
-const openSans = Open_Sans({
+const montserrat = Montserrat({
   subsets: ['latin'],
   display: 'swap',
-  variable: '--font-open-sans',
+  variable: '--font-montserrat',
+  weight: ['400', '500', '600', '700', '800'],
 });
 
 export const metadata: Metadata = {
@@ -28,7 +29,7 @@ export default function RootLayout({
     (function() {
       try {
         var stored = localStorage.getItem('tutortrack-theme');
-        var theme = stored || 'system';
+        var theme = stored || 'light';
         var resolved = theme === 'system'
           ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
           : theme;
@@ -41,7 +42,7 @@ export default function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
-      <body className={openSans.className} suppressHydrationWarning>
+      <body className={montserrat.className} suppressHydrationWarning>
         <ErrorBoundary>
           <Providers>
             {children}

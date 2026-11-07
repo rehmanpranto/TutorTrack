@@ -186,22 +186,36 @@ export default function Dashboard() {
 
   if (!session) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950 mesh-gradient relative overflow-hidden">
+      <div className="min-h-screen flex items-center justify-center mesh-gradient relative overflow-hidden px-4">
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-1/4 left-1/6 w-72 h-72 bg-indigo-400/10 dark:bg-indigo-600/10 rounded-full blur-3xl animate-float"></div>
           <div className="absolute bottom-1/4 right-1/6 w-96 h-96 bg-purple-400/10 dark:bg-purple-600/10 rounded-full blur-3xl animate-float-slow"></div>
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-pink-400/5 dark:bg-pink-600/5 rounded-full blur-3xl animate-float-slower"></div>
         </div>
 
-        <div className="max-w-md w-full space-y-8 text-center glass-strong rounded-3xl p-10 animate-scale-in relative z-10">
+        <div className="max-w-5xl w-full grid lg:grid-cols-[1.05fr_0.95fr] gap-5 items-stretch relative z-10">
+          <div className="hidden lg:flex flex-col justify-between rounded-3xl bg-[#14213d] p-12 text-white shadow-2xl shadow-indigo-950/20 overflow-hidden relative">
+            <div className="absolute -right-24 -top-24 w-80 h-80 rounded-full border-[40px] border-[#f28c5b]/30"></div>
+            <div className="relative">
+              <p className="text-sm font-bold uppercase tracking-[0.24em] text-[#f6bd9f]">TutorTrack / 01</p>
+              <h1 className="mt-8 text-5xl font-extrabold leading-[1.08] tracking-tight">Make every<br /><span className="text-[#f28c5b]">session count.</span></h1>
+              <p className="mt-6 max-w-sm text-base leading-7 text-slate-300">A calm, focused workspace for attendance, lesson notes, and the rhythm of your teaching week.</p>
+            </div>
+            <div className="relative flex items-center gap-3 text-sm text-slate-300">
+              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-[#f28c5b]">✦</span>
+              Built for independent tutors
+            </div>
+          </div>
+
+          <div className="w-full space-y-8 text-center glass-strong rounded-3xl p-8 sm:p-10 animate-scale-in">
           <div className="space-y-5">
-            <div className="w-20 h-20 mx-auto bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-xl shadow-indigo-500/30 transform rotate-3">
-              <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-20 h-20 mx-auto bg-[#14213d] dark:bg-white rounded-3xl flex items-center justify-center shadow-xl shadow-indigo-500/20 rotate-3">
+              <svg className="w-10 h-10 text-[#f28c5b] dark:text-[#5b4bdb]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C20.832 18.477 19.246 18 17.5 18c-1.746 0-3.332.477-4.5 1.253" />
               </svg>
             </div>
-            <h2 className="text-4xl font-extrabold gradient-text">TutorTrack</h2>
-            <p className="text-gray-500 dark:text-gray-400 text-lg">Your intelligent tutoring companion</p>
+            <h2 className="text-4xl font-extrabold text-[#14213d] dark:text-white tracking-tight">Welcome to <span className="gradient-text">TutorTrack</span></h2>
+            <p className="text-gray-500 dark:text-gray-400 text-base">Your intelligent tutoring companion</p>
           </div>
           <button onClick={() => signIn()} className="btn w-full py-4 text-base shadow-xl shadow-indigo-500/20">
             Get Started
@@ -209,14 +223,17 @@ export default function Dashboard() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
             </svg>
           </button>
-          <p className="text-xs text-gray-400 dark:text-gray-500">Secure authentication powered by NextAuth</p>
+          <div className="flex justify-center gap-5 text-xs font-medium text-gray-400">
+            <span>Attendance</span><span>•</span><span>Insights</span><span>•</span><span>Reports</span>
+          </div>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 mesh-gradient relative" suppressHydrationWarning>
+    <div className="min-h-screen mesh-gradient relative" suppressHydrationWarning>
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-96 h-96 bg-indigo-400/5 dark:bg-indigo-600/5 rounded-full blur-3xl animate-float"></div>
         <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-purple-400/5 dark:bg-purple-600/5 rounded-full blur-3xl animate-float-slow"></div>
@@ -229,25 +246,26 @@ export default function Dashboard() {
           <div className="mb-6 animate-fade-in">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div>
-                <h1 className="text-3xl font-extrabold text-gray-900 dark:text-gray-100 tracking-tight">Dashboard</h1>
-                <p className="text-gray-500 dark:text-gray-400 mt-1">Track your tutoring sessions and progress</p>
+                <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#f28c5b] mb-2">Your teaching workspace</p>
+                <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-gray-100 tracking-tight">Good to see you, {session.user?.name?.split(' ')[0] || 'Tutor'}.</h1>
+                <p className="text-gray-500 dark:text-gray-400 mt-2">Keep your sessions moving with a clear view of today and the month ahead.</p>
               </div>
               {activeTab === 'overview' && (
                 <div className="flex items-center space-x-2 glass-strong rounded-2xl p-1.5">
                   <button
                     onClick={() => handleMonthChange('prev')}
-                    className="p-2.5 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-xl transition-all duration-300 text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400"
+                    className="p-2.5 hover:bg-[#8eaf91]/10 rounded-xl transition-all duration-300 text-gray-500 hover:text-[#8eaf91]"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" /></svg>
                   </button>
-                  <div className="px-5 py-2 bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/40 dark:to-purple-900/40 rounded-xl min-w-[160px] text-center">
-                    <NoSSR fallback={<span className="text-sm font-semibold text-indigo-700 dark:text-indigo-300">{`${currentMonth.year}-${currentMonth.month.toString().padStart(2, '0')}`}</span>}>
-                      <span className="text-sm font-semibold text-indigo-700 dark:text-indigo-300">{formatMonthYearSafe(currentMonth.year, currentMonth.month)}</span>
+                  <div className="px-5 py-2 bg-[#dfe8dc] dark:bg-[#304337] rounded-xl min-w-[160px] text-center">
+                    <NoSSR fallback={<span className="text-sm font-semibold text-[#5f8068] dark:text-[#d9e3d3]">{`${currentMonth.year}-${currentMonth.month.toString().padStart(2, '0')}`}</span>}>
+                      <span className="text-sm font-semibold text-[#5f8068] dark:text-[#d9e3d3]">{formatMonthYearSafe(currentMonth.year, currentMonth.month)}</span>
                     </NoSSR>
                   </div>
                   <button
                     onClick={() => handleMonthChange('next')}
-                    className="p-2.5 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-xl transition-all duration-300 text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400"
+                    className="p-2.5 hover:bg-[#8eaf91]/10 rounded-xl transition-all duration-300 text-gray-500 hover:text-[#8eaf91]"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
                   </button>

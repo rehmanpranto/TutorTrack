@@ -43,31 +43,31 @@ export default function OverviewTab({
     <>
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-8">
-        <div className="glass-strong rounded-2xl p-6 hover:shadow-xl hover:shadow-emerald-500/5 transition-all duration-500 hover:-translate-y-1 animate-fade-in-up group">
+        <div className="glass-strong rounded-xl p-6 hover:shadow-xl hover:shadow-emerald-500/5 transition-all duration-500 hover:-translate-y-1 animate-fade-in-up group">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Present Days</p>
               <p className="text-3xl font-extrabold text-gray-900 dark:text-gray-100 mt-1">{presentCount}</p>
             </div>
-            <div className="w-14 h-14 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-500/20 group-hover:scale-110 transition-transform duration-500">
-              <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-14 h-14 bg-[#dbe8dc] rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-500/10 group-hover:scale-110 transition-transform duration-500">
+              <svg className="w-7 h-7 text-[#60806a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
           </div>
           <div className="mt-4 w-full bg-gray-100 dark:bg-gray-700/50 rounded-full h-2 overflow-hidden">
-            <div className="bg-gradient-to-r from-emerald-400 to-teal-500 h-2 rounded-full transition-all duration-700" style={{ width: `${progressPct}%` }}></div>
+            <div className="bg-[#71947a] h-2 rounded-full transition-all duration-700" style={{ width: `${progressPct}%` }}></div>
           </div>
         </div>
 
-        <div className="glass-strong rounded-2xl p-6 hover:shadow-xl hover:shadow-indigo-500/5 transition-all duration-500 hover:-translate-y-1 animate-fade-in-up group" style={{ animationDelay: '0.1s' }}>
+        <div className="glass-strong rounded-xl p-6 hover:shadow-xl hover:shadow-indigo-500/5 transition-all duration-500 hover:-translate-y-1 animate-fade-in-up group" style={{ animationDelay: '0.1s' }}>
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Monthly Limit</p>
               <p className="text-3xl font-extrabold text-gray-900 dark:text-gray-100 mt-1">{monthlyLimit}</p>
             </div>
-            <div className="w-14 h-14 bg-gradient-to-br from-indigo-400 to-blue-500 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-500/20 group-hover:scale-110 transition-transform duration-500">
-              <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-14 h-14 bg-[#e6ded2] rounded-2xl flex items-center justify-center shadow-lg shadow-orange-500/10 group-hover:scale-110 transition-transform duration-500">
+              <svg className="w-7 h-7 text-[#a46f50]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
             </div>
@@ -78,14 +78,14 @@ export default function OverviewTab({
           </div>
         </div>
 
-        <div className="glass-strong rounded-2xl p-6 hover:shadow-xl hover:shadow-purple-500/5 transition-all duration-500 hover:-translate-y-1 animate-fade-in-up group" style={{ animationDelay: '0.2s' }}>
+        <div className="glass-strong rounded-xl p-6 hover:shadow-xl hover:shadow-purple-500/5 transition-all duration-500 hover:-translate-y-1 animate-fade-in-up group" style={{ animationDelay: '0.2s' }}>
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Remaining</p>
               <p className="text-3xl font-extrabold text-gray-900 dark:text-gray-100 mt-1">{Math.max(0, monthlyLimit - presentCount)}</p>
             </div>
-            <div className="w-14 h-14 bg-gradient-to-br from-purple-400 to-pink-500 rounded-2xl flex items-center justify-center shadow-lg shadow-purple-500/20 group-hover:scale-110 transition-transform duration-500">
-              <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-14 h-14 bg-[#ead5cc] rounded-2xl flex items-center justify-center shadow-lg shadow-rose-500/10 group-hover:scale-110 transition-transform duration-500">
+              <svg className="w-7 h-7 text-[#aa665d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
             </div>

@@ -57,15 +57,15 @@ interface TabsProps {
 
 export default function Tabs({ active, onChange }: TabsProps) {
   return (
-    <div className="glass-strong rounded-2xl p-1.5 inline-flex items-center gap-1 mb-6 overflow-x-auto">
+    <div className="glass-strong rounded-2xl p-1.5 flex items-center gap-1 mb-7 overflow-x-auto w-full sm:w-fit">
       {TABS.map((tab) => (
         <button
           key={tab.id}
           onClick={() => onChange(tab.id)}
           className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 whitespace-nowrap ${
             active === tab.id
-              ? 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-md shadow-indigo-500/20'
-              : 'text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20'
+              ? 'bg-[#26372b] dark:bg-[#d9e3d3] text-white dark:text-[#26372b] shadow-md shadow-black/10'
+              : 'text-gray-500 dark:text-gray-400 hover:text-[#8eaf91] hover:bg-[#8eaf91]/10'
           }`}
         >
           {tab.icon}

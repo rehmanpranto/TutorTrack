@@ -40,9 +40,19 @@ export async function initializeDatabase() {
       )
     `);
 
-    // Create attendance view with month & year
+    // Add time columns if they don't exist (migration)
+    try {
+      await client.query(`ALTER TABLE attendance ADD COLUMN IF NOT EXISTS start_time TIME`);
+      await client.query(`ALTER TABLE attendance ADD COLUMN IF NOT EXISTS end_time TIME`);
+    } catch (error) {
+      // Columns might already exist, ignore error
+      console.log('Time columns may already exist:', error);
+    }
+
+    // Recreate the derived view so older column layouts are migrated safely.
+    await client.query('DROP VIEW IF EXISTS attendance_with_month_year');
     await client.query(`
-      CREATE OR REPLACE VIEW attendance_with_month_year AS
+      CREATE VIEW attendance_with_month_year AS
       SELECT 
         id,
         student_id,
@@ -56,15 +66,6 @@ export async function initializeDatabase() {
         created_at
       FROM attendance
     `);
-
-    // Add time columns if they don't exist (migration)
-    try {
-      await client.query(`ALTER TABLE attendance ADD COLUMN IF NOT EXISTS start_time TIME`);
-      await client.query(`ALTER TABLE attendance ADD COLUMN IF NOT EXISTS end_time TIME`);
-    } catch (error) {
-      // Columns might already exist, ignore error
-      console.log('Time columns may already exist:', error);
-    }
 
     // Create users table for authentication
     await client.query(`

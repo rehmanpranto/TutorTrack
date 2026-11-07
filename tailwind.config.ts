@@ -59,7 +59,7 @@ const config: Config = {
         },
       },
       fontFamily: {
-        sans: ['var(--font-open-sans)', 'Open Sans', 'system-ui', 'sans-serif'],
+        sans: ['var(--font-montserrat)', 'Montserrat', 'system-ui', 'sans-serif'],
       },
       colors: {
         blue: {
