@@ -1,119 +1,43 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { AttendanceRecord } from '../types';
-import { getDaysInMonth, getFirstDayOfMonth, formatDateFromYMD } from '../lib/utils';
+import { getDaysInMonth, getFirstDayOfMonth, formatDateFromYMD, getMonthName } from '../lib/utils';
 
-interface CalendarProps {
-  month: number;
-  year: number;
-  attendanceData: AttendanceRecord[];
-  onDateClick: (date: string) => void;
-}
+interface CalendarProps { month: number; year: number; attendanceData: AttendanceRecord[]; onDateClick: (date: string) => void; }
 
 export default function Calendar({ month, year, attendanceData, onDateClick }: CalendarProps) {
-  const [currentDay, setCurrentDay] = useState<number | null>(null);
-  const [isCurrentMonth, setIsCurrentMonth] = useState(false);
-  
-  // Set current date after component mounts to avoid hydration mismatch
-  useEffect(() => {
-    const now = new Date();
-    const day = now.getDate();
-    const currentMonth = now.getMonth() + 1;
-    const currentYear = now.getFullYear();
-    
-    setCurrentDay(day);
-    setIsCurrentMonth(currentMonth === month && currentYear === year);
-  }, [month, year]);
-
-  const daysInMonth = getDaysInMonth(month, year);
-  const firstDay = getFirstDayOfMonth(month, year);
-
-  // Create a map for quick lookup of attendance data
-  const attendanceMap = attendanceData.reduce((map, record) => {
-    // Parse date string directly to avoid timezone issues
-    const dateStr = record.attendance_date;
-    const day = dateStr.includes('-') ? parseInt(dateStr.split('-')[2]) : new Date(dateStr).getDate();
-    map[day] = record;
-    return map;
-  }, {} as Record<number, AttendanceRecord>);
-
-  // Generate calendar days
-  const calendarDays = [];
-  
-  // Empty cells for days before the first day of the month
-  for (let i = 0; i < firstDay; i++) {
-    calendarDays.push(null);
-  }
-  
-  // Days of the month
-  for (let day = 1; day <= daysInMonth; day++) {
-    calendarDays.push(day);
-  }
-
-  const handleDateClick = (day: number) => {
-    const dateString = formatDateFromYMD(year, month, day);
-    onDateClick(dateString);
-  };
-
+  const [today, setToday] = useState<{ day: number; month: number; year: number } | null>(null);
+  useEffect(() => { const now = new Date(); setToday({ day: now.getDate(), month: now.getMonth() + 1, year: now.getFullYear() }); }, []);
+  const map = attendanceData.reduce<Record<number, AttendanceRecord>>((result, record) => {
+    const day = record.attendance_date.includes('-') ? Number(record.attendance_date.split('-')[2]) : new Date(record.attendance_date).getDate();
+    result[day] = record; return result;
+  }, {});
+  const days = Array.from({ length: getFirstDayOfMonth(month, year) + getDaysInMonth(month, year) }, (_, index) => index < getFirstDayOfMonth(month, year) ? null : index - getFirstDayOfMonth(month, year) + 1);
+  const isSameRow = (a: number, b: number) => Math.floor((a + getFirstDayOfMonth(month, year) - 1) / 7) === Math.floor((b + getFirstDayOfMonth(month, year) - 1) / 7);
+  const presentDays = Object.keys(map).filter((day) => map[Number(day)].status === 'Present').map(Number);
+  const streak = presentDays.length ? Math.max(...presentDays.map((day) => {
+    let count = 1; while (presentDays.includes(day + count)) count++; return count;
+  })) : 0;
+  const present = presentDays.length;
+  const absent = Object.values(map).filter((record) => record.status === 'Absent').length;
   return (
-    <div className="space-y-4">
-      {/* Weekday Headers */}
-      <div className="grid grid-cols-7 gap-1.5">
-        {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day, index) => (
-          <div key={`weekday-${index}-${day}`} className="text-center py-2.5 text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">
-            {day}
-          </div>
-        ))}
+    <section className="bento-tile calendar-tile">
+      <div className="calendar-heading"><h2>{getMonthName(month)} <span>{year}</span></h2><span className="streak-badge">{streak}-day streak</span></div>
+      <div className="calendar-wrap">
+        <div className="calendar-weekdays">{['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => <span key={day}>{day}</span>)}</div>
+        <div className="calendar-days">
+          {days.map((day, index) => {
+            if (day === null) return <div key={`empty-${index}`} className="calendar-day" aria-hidden="true" />;
+            const record = map[day];
+            const isPresent = record?.status === 'Present';
+            const previousPresent = isPresent && map[day - 1]?.status === 'Present' && isSameRow(day - 1, day);
+            const nextPresent = isPresent && map[day + 1]?.status === 'Present' && isSameRow(day, day + 1);
+            const isToday = today?.day === day && today.month === month && today.year === year;
+            const isPast = today && new Date(year, month - 1, day) < new Date(today.year, today.month - 1, today.day);
+            return <div key={day} className={`calendar-day ${isPresent ? 'present' : ''} ${isPresent && !previousPresent ? 'first' : ''} ${isPresent && !nextPresent ? 'last' : ''} ${isToday ? 'today' : ''} ${isPast && !record ? 'past-empty' : ''}`}><button onClick={() => onDateClick(formatDateFromYMD(year, month, day))} aria-label={`Select ${getMonthName(month)} ${day}`}>{day}</button></div>;
+          })}
+        </div>
       </div>
-
-      {/* Calendar Grid */}
-      <div className="grid grid-cols-7 gap-1.5">
-        {calendarDays.map((day, index) => {
-          if (day === null) {
-            return <div key={`empty-${index}`} className="h-14"></div>;
-          }
-
-          const attendance = attendanceMap[day];
-          const isToday = isCurrentMonth && currentDay !== null && day === currentDay;
-          
-          let bgColor = 'bg-gray-50/80 dark:bg-gray-700/20 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 border border-gray-100 dark:border-gray-700/50';
-          let textStyle = 'text-gray-600 dark:text-gray-400';
-          let dotColor = '';
-          
-          if (attendance) {
-            if (attendance.status === 'Present') {
-              bgColor = 'bg-emerald-50 dark:bg-emerald-900/20 hover:bg-emerald-100 dark:hover:bg-emerald-900/30 border border-emerald-200/60 dark:border-emerald-700/40';
-              textStyle = 'text-emerald-700 dark:text-emerald-300 font-bold';
-              dotColor = 'bg-emerald-400';
-            } else {
-              bgColor = 'bg-rose-50 dark:bg-rose-900/20 hover:bg-rose-100 dark:hover:bg-rose-900/30 border border-rose-200/60 dark:border-rose-700/40';
-              textStyle = 'text-rose-700 dark:text-rose-300 font-bold';
-              dotColor = 'bg-rose-400';
-            }
-          }
-          
-          if (isToday) {
-            bgColor += ' ring-2 ring-indigo-500 dark:ring-indigo-400 ring-offset-1 dark:ring-offset-gray-800';
-          }
-
-          return (
-            <button
-              key={`day-${day}`}
-              onClick={() => handleDateClick(day)}
-              className={`h-14 flex flex-col items-center justify-center text-sm transition-all duration-300 cursor-pointer rounded-xl hover:scale-105 ${bgColor} relative group`}
-            >
-              <span className={`${textStyle} ${isToday ? 'font-extrabold' : ''}`}>
-                {day}
-              </span>
-              {attendance && (
-                <div className={`w-1.5 h-1.5 rounded-full ${dotColor} mt-0.5`}></div>
-              )}
-              {isToday && !attendance && (
-                <div className="w-1.5 h-1.5 rounded-full bg-indigo-400 mt-0.5 animate-pulse"></div>
-              )}
-            </button>
-          );
-        })}
-      </div>
-    </div>
+      <div className="calendar-footer"><span><strong>{present}</strong>Present</span><span><strong>{absent}</strong>Absent</span><span className="calendar-note">Click a day to mark attendance</span></div>
+    </section>
   );
 }

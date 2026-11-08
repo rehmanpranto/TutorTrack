@@ -233,48 +233,37 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen mesh-gradient relative" suppressHydrationWarning>
+    <div className="dashboard-shell relative" suppressHydrationWarning>
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-96 h-96 bg-indigo-400/5 dark:bg-indigo-600/5 rounded-full blur-3xl animate-float"></div>
         <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-purple-400/5 dark:bg-purple-600/5 rounded-full blur-3xl animate-float-slow"></div>
       </div>
 
-      <Header userName={session.user?.name || 'User'} />
-
-      <main className="container mx-auto px-4 sm:px-6 py-6 relative z-10">
+      <Tabs active={activeTab} onChange={setActiveTab} />
+      <main className="dashboard-main container mx-auto px-4 sm:px-8 relative z-10">
         <div className="max-w-7xl mx-auto">
-          <div className="mb-6 animate-fade-in">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div>
-                <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#f28c5b] mb-2">Your teaching workspace</p>
-                <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-gray-100 tracking-tight">Good to see you, {session.user?.name?.split(' ')[0] || 'Tutor'}.</h1>
-                <p className="text-gray-500 dark:text-gray-400 mt-2">Keep your sessions moving with a clear view of today and the month ahead.</p>
-              </div>
-              {activeTab === 'overview' && (
-                <div className="flex items-center space-x-2 glass-strong rounded-2xl p-1.5">
+          <Header userName={session.user?.name || 'User'} />
+          {activeTab === 'overview' && (
+                <div className="month-switcher justify-end w-fit ml-auto mb-4">
                   <button
                     onClick={() => handleMonthChange('prev')}
-                    className="p-2.5 hover:bg-[#8eaf91]/10 rounded-xl transition-all duration-300 text-gray-500 hover:text-[#8eaf91]"
+                    aria-label="Previous month"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" /></svg>
                   </button>
-                  <div className="px-5 py-2 bg-[#dfe8dc] dark:bg-[#304337] rounded-xl min-w-[160px] text-center">
+                  <div className="month-label">
                     <NoSSR fallback={<span className="text-sm font-semibold text-[#5f8068] dark:text-[#d9e3d3]">{`${currentMonth.year}-${currentMonth.month.toString().padStart(2, '0')}`}</span>}>
-                      <span className="text-sm font-semibold text-[#5f8068] dark:text-[#d9e3d3]">{formatMonthYearSafe(currentMonth.year, currentMonth.month)}</span>
+                      <span>{formatMonthYearSafe(currentMonth.year, currentMonth.month)}</span>
                     </NoSSR>
                   </div>
                   <button
                     onClick={() => handleMonthChange('next')}
-                    className="p-2.5 hover:bg-[#8eaf91]/10 rounded-xl transition-all duration-300 text-gray-500 hover:text-[#8eaf91]"
+                    aria-label="Next month"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
                   </button>
                 </div>
               )}
-            </div>
-          </div>
-
-          <Tabs active={activeTab} onChange={setActiveTab} />
 
           {activeTab === 'overview' && (
             <OverviewTab
