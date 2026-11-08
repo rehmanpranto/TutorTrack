@@ -4,14 +4,13 @@ import { useSession, signIn } from 'next-auth/react';
 import { useState, useEffect, useCallback } from 'react';
 import Header from '../components/Header';
 import Loading from '../components/Loading';
-import NoSSR from '../components/NoSSR';
 import Tabs, { TabId } from '../components/Tabs';
 import OverviewTab from '../components/tabs/OverviewTab';
 import HistoryTab from '../components/tabs/HistoryTab';
 import SettingsTab from '../components/tabs/SettingsTab';
 import AnalyticsTab from '../components/tabs/AnalyticsTab';
 import { AttendanceRecord } from '../types';
-import { formatDate, formatMonthYearSafe } from '../lib/utils';
+import { formatDate } from '../lib/utils';
 
 export default function Dashboard() {
   const { data: session, status } = useSession();
@@ -242,28 +241,12 @@ export default function Dashboard() {
       <Tabs active={activeTab} onChange={setActiveTab} />
       <main className="dashboard-main container mx-auto px-4 sm:px-8 relative z-10">
         <div className="max-w-7xl mx-auto">
-          <Header userName={session.user?.name || 'User'} />
-          {activeTab === 'overview' && (
-                <div className="month-switcher justify-end w-fit ml-auto mb-4">
-                  <button
-                    onClick={() => handleMonthChange('prev')}
-                    aria-label="Previous month"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" /></svg>
-                  </button>
-                  <div className="month-label">
-                    <NoSSR fallback={<span className="text-sm font-semibold text-[#5f8068] dark:text-[#d9e3d3]">{`${currentMonth.year}-${currentMonth.month.toString().padStart(2, '0')}`}</span>}>
-                      <span>{formatMonthYearSafe(currentMonth.year, currentMonth.month)}</span>
-                    </NoSSR>
-                  </div>
-                  <button
-                    onClick={() => handleMonthChange('next')}
-                    aria-label="Next month"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
-                  </button>
-                </div>
-              )}
+          <Header
+            userName={session.user?.name || 'User'}
+            month={activeTab === 'overview' ? currentMonth.month : undefined}
+            year={activeTab === 'overview' ? currentMonth.year : undefined}
+            onMonthChange={handleMonthChange}
+          />
 
           {activeTab === 'overview' && (
             <OverviewTab

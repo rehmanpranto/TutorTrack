@@ -37,7 +37,7 @@ body {
 h1, h2, h3, h4, .display-number { font-family: var(--font-montserrat), 'Montserrat', sans-serif; font-weight: 800; }
 .dashboard-shell { background: var(--paper); min-height: 100vh; }
 .bento-tile { background: var(--surface); border: 1px solid var(--line); border-radius: 26px; padding: 22px; }
-.dashboard-main { margin-left: 72px; }
+.dashboard-main { margin-left: 72px; max-width: 1240px; }
 .dashboard-heading { color: var(--ink); }
 .muted { color: var(--muted); }
 .small-muted { color: #8a9082; }
@@ -48,7 +48,7 @@ h1, h2, h3, h4, .display-number { font-family: var(--font-montserrat), 'Montserr
 .rail-button:hover { color:var(--ink); background:rgba(255,255,255,.07); }
 .rail-button.active { color:var(--brand-deep); background:var(--brand); }
 .rail-bottom { margin-top:auto; }
-.page-header { display:flex; justify-content:space-between; align-items:flex-end; gap:20px; padding:34px 0 24px; }
+.page-header { display:flex; justify-content:space-between; align-items:flex-end; gap:20px; padding:28px 0 20px; }
 .month-switcher { display:flex; align-items:center; gap:8px; padding:5px; background:var(--surface); border:1px solid var(--line); border-radius:999px; }
 .month-switcher button { width:36px; height:36px; border-radius:50%; color:var(--muted); display:grid; place-items:center; }
 .month-switcher button:hover { background:rgba(255,255,255,.07); color:var(--ink); }
@@ -59,7 +59,7 @@ h1, h2, h3, h4, .display-number { font-family: var(--font-montserrat), 'Montserr
 .progress-ring { width:174px; height:174px; margin:22px auto 18px; position:relative; }
 .progress-ring svg { transform:rotate(-90deg); }
 .progress-ring-content { position:absolute; inset:0; display:grid; place-content:center; text-align:center; }
-.progress-ring-content strong { font:700 44px var(--font-montserrat); line-height:1; }
+.progress-ring-content strong { font:700 48px var(--font-montserrat); line-height:1; }
 .progress-ring-content span { font-size:12px; font-weight:600; }
 .stat-chips { display:flex; gap:8px; }
 .stat-chip { flex:1; padding:10px 12px; border-radius:14px; background:rgba(16,19,10,.1); font-size:11px; }
@@ -77,7 +77,7 @@ h1, h2, h3, h4, .display-number { font-family: var(--font-montserrat), 'Montserr
 .row-actions { display:flex; gap:3px; }
 .row-actions button { min-width:30px; min-height:30px; display:grid; place-items:center; color:#8a9082; border-radius:9px; }
 .row-actions button:hover { background:rgba(255,255,255,.08); color:var(--ink); }
-.calendar-tile { min-height:600px; display:flex; flex-direction:column; }
+.calendar-tile { min-height:600px; display:flex; flex-direction:column; padding:24px; }
 .calendar-heading { display:flex; justify-content:space-between; align-items:center; gap:12px; }
 .calendar-heading h2 { font-size:32px; line-height:1; }
 .calendar-heading h2 span { color:var(--muted); }
@@ -117,7 +117,8 @@ h1, h2, h3, h4, .display-number { font-family: var(--font-montserrat), 'Montserr
 .report-toggle button { padding:9px; border-radius:999px; color:rgba(16,19,10,.7); font-size:12px; font-weight:700; }
 .report-toggle button.selected { background:var(--brand-deep); color:var(--accent); }
 .report-buttons { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
-.report-buttons button { min-height:44px; border-radius:999px; background:var(--brand-deep); color:var(--accent); font-size:12px; font-weight:700; }
+.report-buttons button { min-height:44px; border-radius:999px; background:var(--brand-deep); color:var(--accent); font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center; gap:7px; line-height:1; }
+.report-buttons button svg { width:16px; height:16px; flex:0 0 16px; }
 .overview-tabs { display:none; }
 
 @layer components {
@@ -214,9 +215,30 @@ textarea:focus-visible {
   html { font-size: 14px; }
 }
 
-@media (max-width: 1100px) {
-  .bento-grid { grid-template-columns:minmax(0,1fr) 340px; }
-  .calendar-tile { grid-column:1 / -1; grid-row:2; min-height:560px; }
+@media (max-width: 1100px) and (min-width: 761px) {
+  .dashboard-main { padding-left: 26px; padding-right: 26px; }
+  .bento-grid { grid-template-columns:250px minmax(0,1fr) 267px; gap:12px; }
+  .bento-tile { border-radius:22px; padding:16px; }
+  .calendar-tile { min-height:500px; padding:22px; }
+  .calendar-heading h2 { font-size:24px; }
+  .progress-ring { width:150px; height:150px; }
+  .progress-ring svg { width:150px; height:150px; }
+  .progress-ring-content strong { font-size:42px; }
+  .calendar-day { height:58px; }
+  .calendar-day button { width:40px; height:40px; }
+  .calendar-day.present.first::before { left:calc(50% - 20px); }
+  .calendar-day.present.last::before { right:calc(50% - 20px); }
+  .calendar-day.present.first.last::before { left:calc(50% - 20px); right:calc(50% - 20px); }
+  .calendar-day.present::before { height:34px; }
+  .month-label { padding:0 10px; font-size:12px; }
+  .month-switcher button { width:30px; height:30px; }
+  .page-header { padding-top:28px; }
+  .page-header > div:last-child > .hidden,
+  .page-header > div:last-child > .rail-button { display:none; }
+}
+@media (max-width: 900px) and (min-width: 761px) {
+  .bento-grid { grid-template-columns:minmax(0,1fr) 300px; }
+  .calendar-tile { grid-column:1 / -1; grid-row:2; }
   .left-stack { grid-column:1; }
   .right-stack { grid-column:2; }
 }
