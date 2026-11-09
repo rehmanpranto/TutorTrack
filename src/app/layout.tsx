@@ -29,7 +29,7 @@ export default function RootLayout({
     (function() {
       try {
         var stored = localStorage.getItem('tutortrack-theme');
-        var theme = stored || 'light';
+        var theme = stored || 'dark';
         var resolved = theme === 'system'
           ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
           : theme;
